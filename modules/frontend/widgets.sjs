@@ -1,7 +1,8 @@
 @ = require([
   'mho:std',
   'mho:app',
-  {id:'./backfill', name:'backfill'}
+  {id:'./backfill', name:'backfill'},
+  {id:'mho:surface/nodes', name:'nodes'}
 ]);
 
 //----------------------------------------------------------------------
@@ -137,7 +138,56 @@ function HorizontalPhotoStream(session) {
   ");
 
   // just taking 50 most recent photos for now
-  return @Div .. CSS ::
-    session.photos() .. @take(50) .. @transform(x -> @Img() .. @Attrib('src', x.url)) .. @toArray();
+  // XXX appending via mechanism, so that the rest of the page loads fast
+  return @Div() .. CSS() .. @Mechanism(
+    function(node) {
+      node .. @appendContent(
+        session.photos() .. @take(50) .. @map(x -> @Img() .. @Attrib('src', x.url))
+      )
+    });
 }
 exports.HorizontalPhotoStream = HorizontalPhotoStream;
+
+
+//----------------------------------------------------------------------
+
+function StoryEditWidget(StoryContent) {
+  var width = document.body.clientWidth-20;
+  var image_size = Math.min(288, Math.floor(width/2-8));
+  
+  var CSS = @CSS("
+    .block {
+      width: #{image_size}px;
+      height: #{image_size}px;
+      margin: 2px;
+      background-color: #2d3c42;
+      border: 2px solid #2d5665;
+      display: inline-block;
+    }
+    .block[selected] {
+      background-color: #2b5667;
+      border: 2px solid #29c4fb;
+    }
+    .block > img {
+      width: 100%;
+      height: 100%;
+    }
+  ");
+
+  function Block(descriptor) {
+    var rv = @Div() .. @Class('block');
+    if (descriptor.type === 'img')
+      rv = rv .. @Content(@Img() .. @Attrib('src', descriptor.url))
+    return rv .. @backfill.cmd.Click('select-block', -> @nodes.Node())
+  }
+  
+  return @Div .. CSS ::
+    StoryContent .. @transform(
+      content ->
+        content .. @map( 
+          row -> @Div(row .. @map(Block))
+        )
+    );
+}
+exports.StoryEditWidget = StoryEditWidget;
+

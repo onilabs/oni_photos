@@ -30,20 +30,40 @@ function do_index(session) {
 
 //----------------------------------------------------------------------
 
+var story = {
+  content: [
+    [{type:'blank'},{type:'blank'}],
+    [{type:'blank'},{type:'blank'}],
+    [{type:'blank'},{type:'blank'}],
+    [{type:'blank'},{type:'blank'}]
+  ]
+};
+
+var Story = @ObservableVar(story.content);
+
+
 function do_edit_story(session) {  
   document.body .. @appendContent(
     @widgets.Page({
       title:        'STORY',
       title_action: @Span() .. @backfill.cmd.Click('done') :: 'Done',
-      body: @widgets.VerticalPhotoStream(session),
+      
+      body: @widgets.StoryEditWidget(Story),
+      
       footer: @Div ..@Style('margin:10px;') ::
         @widgets.HorizontalPhotoStream(session)      
     })
   ) {
     ||
-    @backfill.cmd.stream(['done', 'connect']) .. @each {
+    var selected_block;
+    @backfill.cmd.stream(['done', 'select-block']) .. @each {
       |[cmd,param]|
-      // XXX hook up connect
+      if (cmd === 'select-block') {
+        if (selected_block)
+          selected_block.removeAttribute('selected');
+        selected_block = param;
+        selected_block.setAttribute('selected', true);
+      }
       if (cmd === 'done') return;
     }
   }

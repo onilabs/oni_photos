@@ -23,7 +23,7 @@ cmd.Click = function(element, cmd, param) {
     isActive: function() { return !!emitter },
     setEmitter: function(e) { emitter = e; Enabled.set(!!e); }
   };
-  
+
   return element ..
     @Attrib('__oni_cmd_emitter', true) ..
     @Mechanism(function(node) {
@@ -49,7 +49,11 @@ cmd.Click = function(element, cmd, param) {
     }) ..
     @On('click',
         {handle:@dom.preventDefault},
-        ev -> emitter ? emitter.emit([cmd,typeof param === 'function' ? param(node) : param])
+        ev -> emitter ? emitter.emit([cmd,
+                                      param ?
+                                      (typeof param === 'function' ? param(ev) : param) :
+                                      ev
+                                     ])
        ) ..
     @Enabled(Enabled);
 };
