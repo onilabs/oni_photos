@@ -1,0 +1,124 @@
+/* (c) 2013-2014 Oni Labs, http://onilabs.com
+ *
+ * This file is part of Conductance, http://conductance.io/
+ *
+ * It is subject to the license terms in the LICENSE file
+ * found in the top-level directory of this distribution.
+ * No part of Conductance, including this file, may be
+ * copied, modified, propagated, or distributed except
+ * according to the terms contained in the LICENSE file.
+ */
+
+/**
+   @summary Main application API
+   @desc
+     **NB** To facilitate operation across temporary server disconnects, all
+     functions exposed in the API should be idempotent.
+*/
+
+
+@ = require([
+  'mho:std',
+  {id: 'lib:app-info', name: 'app_info'},
+  {id: 'mho:services/google_api/REST/picasawebV2', name: 'picasa'},
+  {id: 'backend:users', name: 'users'},
+  {id: 'mho:server/random', name: 'random'}
+]);
+
+/**
+   @variable api_version
+   @summary API version
+*/
+exports.api_version = @app_info.version;
+
+// google scopes we're authenticating with:
+var google_scopes = [
+  'https://picasaweb.google.com/data/'
+];
+
+
+exports.loginGoogle = function(origin, redirect) {
+  var authentication_scopes = google_scopes.concat(['openid email']);
+  var google_oauth_session = @env('services').google_api_oauth.APISession();
+  var google_tokens = google_oauth_session.promptUserAuthorization(authentication_scopes, redirect, origin);
+
+  if (!google_tokens.id_token) return false;
+  
+  // parse the id token:
+  try {
+    // id_token is header.payload.signature - see https://tools.ietf.org/html/rfc7519
+    var id_token = google_tokens.id_token.split('.')[1] .. @base64ToOctets .. @utf8ToString;
+    // replace trailing '0' bytes
+    id_token = id_token.replace(/\0+$/, '');
+    id_token = id_token .. JSON.parse;
+  }
+  catch (e) {
+    console.log("failure parsing id token (#{e})");
+    return false;
+  }
+  if (!id_token.email) return false;
+
+
+  // XXX the following two should be transactional!
+  try {
+    // ok, we've got an authenticated email. check if we've got an account for it already:
+    var account = @users.findAccount(id_token.email);
+    
+    if (!account) {
+      // nope -> let's create one with a random access token
+      account = @users.createAccount({id: id_token.email,
+                                      access_token: @random.createID()
+                                     },
+                                     {
+                                       google_tokens: google_tokens
+                                     });
+    }
+  }
+  catch (e) {
+    console.log("Error in finding/creating account (#{e})");
+    return false;
+  }
+  
+  return { id:    account.id,
+           access_token: account.access_token
+         } .. JSON.stringify;
+  
+};
+
+exports.Session = function(origin, credentials) {
+
+  var user;
+  if (!(user = @users.verifyAccount(credentials))) {
+    throw new Error("Account verification failed");
+  }  
+  
+  var google_oauth_session = @env('services').google_api_oauth.APISession(
+    user .. @users.getCredentials('google_tokens')
+  );
+
+
+  return {
+    authorizeGoogle: function(redirect) {
+      var rv = google_oauth_session.promptUserAuthorization(google_scopes, redirect, origin);
+      return !!rv;
+    },
+
+    Authorized: google_oauth_session.Authorized,
+    
+    photos: function() {
+      // size is hardcoded to 288x288 below
+      return @batchN(20) ::
+        @Stream(function(r) {
+          var photos = google_oauth_session .. @picasa.recentPhotos({thumbsize:'288c'});
+          photos .. @each {
+            |entry|
+            // return the largest thumbnail
+            var thumbnail = entry["media$group"]["media$thumbnail"] .. @find(item -> item.height == 288 || item.width == 288, null);
+            if (thumbnail)
+              r(thumbnail);
+          }
+        });      
+    }
+    
+  };
+};
