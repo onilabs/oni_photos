@@ -13,7 +13,7 @@ var cmd = exports.cmd = {};
    @function Click
    @summary XXX
 */
-cmd.Click = function(element, cmd) {
+cmd.Click = function(element, cmd, param) {
 
   var Enabled = @ObservableVar(false);
   var emitter;
@@ -49,7 +49,7 @@ cmd.Click = function(element, cmd) {
     }) ..
     @On('click',
         {handle:@dom.preventDefault},
-        ev -> emitter ? emitter.emit(cmd)
+        ev -> emitter ? emitter.emit([cmd,typeof param === 'function' ? param(node) : param])
        ) ..
     @Enabled(Enabled);
 };
@@ -62,7 +62,7 @@ cmd.stream = function(/*[dom_root], [commands]*/) {
 
   var args = arguments;
   
-  return @Stream(function(receiver) {
+  return @Stream(function(downstream) {
 
     // untangle arguments:
     var root, bound_commands;
@@ -130,18 +130,18 @@ cmd.stream = function(/*[dom_root], [commands]*/) {
       }
       and {
         emitter .. @each {
-          |cmd|
-          var receiver_taking_time = false;
+          |cmd_param|
+          var downstream_taking_time = false;
           waitfor {
-            receiver(cmd);
+            downstream(cmd_param);
           }
           or {
             hold(100);
-            receiver_taking_time = true;
+            downstream_taking_time = true;
             disable_inputs.emit();
             hold();
           }
-          if (receiver_taking_time)
+          if (downstream_taking_time)
             break; // force outer loop
         }
       }

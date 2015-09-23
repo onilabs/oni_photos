@@ -32,7 +32,7 @@ function login(api) {
   ) {
     ||
     @backfill.cmd.stream(['google_login']) .. @each {
-      |command|
+      |[command, param]|
       var credentials = undefined;
       if (command === 'google_login') {
         @backfill.withPopupWindow {
@@ -70,7 +70,7 @@ function authenticateGoogle(session) {
     ||
     
     @backfill.cmd.stream() .. @each {
-      |command|
+      |[command, param]|
       if (command === 'authenticate') {
 
         @backfill.withPopupWindow {

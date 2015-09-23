@@ -22,7 +22,7 @@ function do_index(session) {
   ) {
     ||
     @backfill.cmd.stream(['add_story']) .. @each {
-      |cmd, param|
+      |[cmd, param]|
       return param;
     }
   }  
@@ -42,7 +42,7 @@ function do_edit_story(session) {
   ) {
     ||
     @backfill.cmd.stream(['done', 'connect']) .. @each {
-      |cmd|
+      |[cmd,param]|
       // XXX hook up connect
       if (cmd === 'done') return;
     }

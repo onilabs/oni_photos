@@ -7,10 +7,10 @@
 //----------------------------------------------------------------------
 // Action
 
-function Action(content, cmd) {
+function Action(content, cmd, param) {
   return @Span(content) ..
     @Class('action') ..
-    @backfill.cmd.Click(cmd);
+    @backfill.cmd.Click(cmd, param);
 }
 exports.Action = Action;
   
