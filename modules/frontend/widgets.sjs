@@ -200,7 +200,7 @@ function StoryEditWidget(StoryContent) {
   
   return @Div() ..
     CSS ..
-    @field.Field({Value:StoryContent}) ..
+    @field.Field('content') ..
     @field.FieldArray(row_template);
 
   

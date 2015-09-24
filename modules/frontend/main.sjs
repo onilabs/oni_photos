@@ -14,48 +14,87 @@ function do_index(session) {
     @widgets.Page({
       title:        'PHOTO STORIES',
       title_action: @Span() .. @backfill.cmd.Click('add_story') :: '+',
-      body: `<h1>You do not have any photo stories yet.</h1>
-             <hr>
-             <p>Photo stories allows you to create simple and beautiful photo & text based
-              albums using your existing photos in the cloud.</p>
-        `
+      body:
+      session.Stories() .. @transform(function(stories) {
+        var arr = stories ..
+          @map(id -> @Li(id .. @widgets.Action('edit_story', id)));
+
+        if (!arr.length) {
+          return `<h1>You do not have any photo stories yet.</h1>
+                  <hr>
+                  <p>Photo stories allows you to create simple and beautiful photo & text based
+                   albums using your existing photos in the cloud.</p>
+                 `
+        }
+        else
+          return @Ul(arr);
       })
+    })
   ) {
     ||
-    @backfill.cmd.stream(['add_story']) .. @each {
+    @backfill.cmd.stream(['add_story', 'edit_story']) .. @each {
       |[cmd, param]|
-      return param;
+      if (cmd === 'add_story')
+        return undefined;
+      if (cmd === 'edit_story')
+        return param; // param = story id
     }
   }  
 }
 
 //----------------------------------------------------------------------
 
-var story = {
-  content: [
-    [{type:'blank'},{type:'blank'}],
-    [{type:'blank'},{type:'blank'}],
-    [{type:'blank'},{type:'blank'}],
-    [{type:'blank'},{type:'blank'}]
-  ]
-};
 
-var Story = @ObservableVar(story.content);
+function do_edit_story(session, story_id) {
 
+  if (!story_id) {
+    story_id = session.createStory();
+  }
 
-function do_edit_story(session) {  
+  // xxx hack
+  var Upstream = session.StoryData(story_id);
+  var Story = @ObservableVar(Upstream .. @current);
+  var old_set = Story.set;
+  var old_modify = Story.modify;
+  
+  Story.set = function(val) {
+    console.log('setting story');
+    if (!@eq(val, Story .. @current)) {
+      old_set.call(Story, val);
+      console.log('setting upstream');
+      session.modifyStory(story_id, val);
+    }
+  };
+  Story.modify = function(f) {
+    throw new Error("write me");
+  };
+  
+//  var Story = @ObservableVar(session.StoryData(story_id) .. @current);
+
+  
   document.body .. @appendContent(
-    @widgets.Page({
-      title:        'STORY',
-      title_action: @Span() .. @backfill.cmd.Click('done') :: 'Done',
-      
-      body: @widgets.StoryEditWidget(Story),
-      
-      footer: @Div ..@Style('margin:10px;') ::
-        @widgets.HorizontalPhotoStream(session)      
-    })
+    @field.Field({Value:Story}) ..
+      @field.FieldMap() ::  
+        @widgets.Page({
+          title:        'STORY',
+          title_action: @Span() .. @backfill.cmd.Click('done') :: 'Done',
+          
+          body: @widgets.StoryEditWidget(Story),
+          
+          footer: @Div ..@Style('margin:10px;') ::
+            @widgets.HorizontalPhotoStream(session)      
+        })
   ) {
     ||
+    waitfor {
+      editing_logic();
+    }
+    or {
+      synchronize_from_upstream();
+    }
+  }
+
+  function editing_logic() {
     var selected_block;
     @backfill.cmd.stream(['done', 'select-block', 'click-photo']) .. @each {
       |[cmd,param]|
@@ -66,7 +105,7 @@ function do_edit_story(session) {
         selected_block = param;
         selected_block.setAttribute('selected', true);
       }
-
+      
       if (cmd === 'click-photo') {
         if (selected_block)
           (selected_block .. @field.Value()).set({type:'img', url:param});
@@ -75,6 +114,17 @@ function do_edit_story(session) {
       if (cmd === 'done') return;
     }
   }
+
+  function synchronize_from_upstream() {
+    Upstream .. @each {
+      |upstream|
+      if (!@eq(upstream, Story .. @current)) {
+        console.log('setting from upstream');
+        Story.set(upstream);
+      }
+    }
+  }
+  
 }
 
 //----------------------------------------------------------------------
@@ -84,7 +134,7 @@ exports.main = function(api) {
   var session = @auth.login(api);
 
   while (1) {
-    var story = session .. do_index();
-    session .. do_edit_story(story);
+    var story_id = session .. do_index();
+    session .. do_edit_story(story_id);
   }
 };

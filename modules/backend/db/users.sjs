@@ -5,32 +5,35 @@
 
      All in global subspace 'users':
 
-         [EMAIL, 'account'] = { id: EMAIL,
+         [USER_ID, 'account'] = { id: USER_ID,
                                 token: string
                               }
 
-         [EMAIL, 'credentials'] : service credentials (google, etc) subspace
+         [USER_ID, 'credentials'] : service credentials (google, etc) subspace
+
+         [USER_ID, 'stories_index', STORY_ID*] = true
 
 */
 
 @ = require([
   'mho:std',
-  {id:'mho:flux/kv', name:'kv'},
-  {id:'mho:server/random', name:'random'}
+  {id:'mho:flux/kv', name:'kv'}
 ]);
 
 // XXX could cache value
-var USERS = -> @env('services').db .. @kv.Subspace('users');
+var USERS = transaction -> (transaction||@env('services').db) .. @kv.Subspace('users');
+exports.USERS = USERS;
 
 //----------------------------------------------------------------------
 
 /**
    @function findAccount
    @summary Retrieve an existing user account
-   @param {String} [id] Account id (email)
+   @param {String} [user_id] user id (email)
+   @param {optional Object} [transaction] 
 */
-function findAccount(id) {
-  var record = USERS() .. @kv.get([id, 'account'], undefined);
+function findAccount(user_id, transaction) {
+  var record = USERS(transaction) .. @kv.get([user_id, 'account'], undefined);
   return record;
 }
 exports.findAccount = findAccount;
@@ -89,10 +92,23 @@ exports.verifyAccount = verifyAccount;
 /**
    @function getCredentials
    @summary Return the stored service credentials for the current user (or undefined)
-   @param {String} [user]
+   @param {String} [user_id]
    @param {String} [credentials_key]
 */
-function getCredentials(user, credentials_key) {
-  return USERS() .. @kv.get([user, 'credentials', credentials_key], undefined); 
+function getCredentials(user_id, credentials_key) {
+  return USERS() .. @kv.get([user_id, 'credentials', credentials_key], undefined); 
 }
 exports.getCredentials = getCredentials;
+
+/**
+   @function Stories
+   @summary XXX write me
+   @param {String} [user_id]
+*/
+function Stories(user_id) {
+  return USERS() ..
+    @kv.Subspace([user_id, 'stories_index']) ..
+    @kv.observeQuery(@kv.RANGE_ALL) ..
+    @transform(kvs -> kvs .. @project([key,val] -> key));
+}
+exports.Stories = Stories;

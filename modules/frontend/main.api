@@ -22,6 +22,7 @@
   {id: 'lib:app-info', name: 'app_info'},
   {id: 'mho:services/google_api/REST/picasawebV2', name: 'picasa'},
   {id: 'backend:db/users', name: 'users'},
+  {id: 'backend:db/stories', name: 'stories'},
   {id: 'mho:server/random', name: 'random'}
 ]);
 
@@ -63,7 +64,7 @@ exports.loginGoogle = function(origin, redirect) {
   try {
     // ok, we've got an authenticated email. check if we've got an account for it already:
     var account = @users.findAccount(id_token.email);
-    
+
     if (!account) {
       // nope -> let's create one with a random access token
       account = @users.createAccount({id: id_token.email,
@@ -118,7 +119,12 @@ exports.Session = function(origin, credentials) {
               r(thumbnail);
           }
         });      
-    }
+    },
+
+    createStory: -> user .. @stories.createStory(),
+    Stories: -> user .. @users.Stories(),
+    StoryData: story_id -> story_id .. @stories.Data(user),
+    modifyStory: (story_id, data) -> story_id .. @stories.modifyStory(data, user)
     
   };
 };
