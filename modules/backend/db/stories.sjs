@@ -77,6 +77,18 @@ function Data(story_id, user_id) {
 exports.Data = Data;
 
 /**
+   @function getPublicStory
+   @summary XXX write me
+   @param {String} [story_id]
+*/
+function getPublicStory(story_id) {
+  // XXX verify that the story is public
+  return STORIES() ..
+    @kv.get([story_id, 'data']);
+}
+exports.getPublicStory = getPublicStory;
+
+/**
    @function modifyStory
    @summary XXX write me
    @param {String} [story_id]

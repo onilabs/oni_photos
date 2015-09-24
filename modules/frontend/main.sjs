@@ -17,7 +17,9 @@ function do_index(session) {
       body:
       session.Stories() .. @transform(function(stories) {
         var arr = stories ..
-          @map(id -> @Li(id .. @widgets.Action('edit_story', id)));
+          @map(id -> @Li([id .. @widgets.Action('edit_story', id),
+                          `&nbsp;<a href="${window.location.origin}/story/${id}">public url</a>`
+                         ]));
 
         if (!arr.length) {
           return `<h1>You do not have any photo stories yet.</h1>

@@ -1,0 +1,63 @@
+/**
+   @summary Wildcard generator file for serving public photo stories
+*/
+
+@ = require([
+  'mho:std',
+  'mho:surface/html',
+  {id: 'backend:db/stories', name: 'stories'}
+]);
+
+exports.filetype = 'html';
+
+var CSS = `
+  <style type="text/css">
+  body   { margin: 0px;
+           background-color: #2f2e2e;
+           color: #6b6b6b;
+           font-family: sans-serif;
+         }
+             
+    .block { width: 50%;
+             display: inline-block;
+           }
+    img    { width: 100%;
+           }
+  </style>`;
+
+exports.content = function(params) {
+
+  try {
+  
+    var story_id = params.path.substring(1);
+
+    function Block(descriptor) {
+      var rv = @Div() .. @Class('block');
+      if (descriptor.type === 'img')
+        rv = rv .. @Content(@Img() .. @Attrib('src', descriptor.url));
+      return rv;
+    }
+    
+    return @Document({
+      title: 'Photo Story',
+      template: 'plain',
+      head: CSS
+    }) ::
+      `
+      <h1>This photo story brought to you by Oni Conductance (TM) (C)</h1>
+      ${
+        @stories.getPublicStory(story_id).content .. @map(
+          row -> row .. @map(Block)
+        )
+      }
+      `;
+  }
+  catch (e) {
+    console.log(e);
+    return @Document({
+      title: 'Error',
+      template: 'plain'
+    }) ::
+      `Nothing to see here; move along`
+  }
+};
