@@ -3,7 +3,8 @@
   'mho:app',
   {id:'./auth', name:'auth'},
   {id:'./widgets', name:'widgets'},
-  {id:'./backfill', name:'backfill'}
+  {id:'./backfill', name:'backfill'},
+  {id:'mho:surface/field', name:'field'}
 ]);
 
 //----------------------------------------------------------------------
@@ -56,14 +57,21 @@ function do_edit_story(session) {
   ) {
     ||
     var selected_block;
-    @backfill.cmd.stream(['done', 'select-block']) .. @each {
+    @backfill.cmd.stream(['done', 'select-block', 'click-photo']) .. @each {
       |[cmd,param]|
+      
       if (cmd === 'select-block') {
         if (selected_block)
           selected_block.removeAttribute('selected');
         selected_block = param;
         selected_block.setAttribute('selected', true);
       }
+
+      if (cmd === 'click-photo') {
+        if (selected_block)
+          (selected_block .. @field.Value()).set({type:'img', url:param});
+      }
+      
       if (cmd === 'done') return;
     }
   }

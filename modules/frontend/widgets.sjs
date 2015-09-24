@@ -2,7 +2,8 @@
   'mho:std',
   'mho:app',
   {id:'./backfill', name:'backfill'},
-  {id:'mho:surface/nodes', name:'nodes'}
+  {id:'mho:surface/nodes', name:'nodes'},
+  {id:'mho:surface/field', name:'field'}
 ]);
 
 //----------------------------------------------------------------------
@@ -142,12 +143,16 @@ function HorizontalPhotoStream(session) {
   return @Div() .. CSS() .. @Mechanism(
     function(node) {
       node .. @appendContent(
-        session.photos() .. @take(50) .. @map(x -> @Img() .. @Attrib('src', x.url))
+        session.photos() ..
+          @take(50) ..
+          @map(x -> @Img() ..
+                 @Attrib('src', x.url) ..
+                 @backfill.cmd.Click('click-photo', x.url)
+              )
       )
     });
 }
 exports.HorizontalPhotoStream = HorizontalPhotoStream;
-
 
 //----------------------------------------------------------------------
 
@@ -174,20 +179,30 @@ function StoryEditWidget(StoryContent) {
     }
   ");
 
-  function Block(descriptor) {
-    var rv = @Div() .. @Class('block');
-    if (descriptor.type === 'img')
-      rv = rv .. @Content(@Img() .. @Attrib('src', descriptor.url))
-    return rv .. @backfill.cmd.Click('select-block', -> @nodes.Node())
+  function col_template() {
+    var rv = @Div() ..
+      @Class('block') ..
+      @backfill.cmd.Click('select-block', ev -> ev.currentTarget) ::
+        @field.Value() .. @transform(
+          function(descriptor) {
+            if (descriptor.type === 'img') {
+              return @Img() .. @Attrib('src', descriptor.url);
+            }
+          }
+        );
+
+    return rv;
   }
   
-  return @Div .. CSS ::
-    StoryContent .. @transform(
-      content ->
-        content .. @map( 
-          row -> @Div(row .. @map(Block))
-        )
-    );
+  function row_template() {
+    return @Div() .. @field.FieldArray(col_template);
+  }
+  
+  return @Div() ..
+    CSS ..
+    @field.Field({Value:StoryContent}) ..
+    @field.FieldArray(row_template);
+
+  
 }
 exports.StoryEditWidget = StoryEditWidget;
-
