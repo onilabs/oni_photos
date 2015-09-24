@@ -21,7 +21,7 @@
   'mho:std',
   {id: 'lib:app-info', name: 'app_info'},
   {id: 'mho:services/google_api/REST/picasawebV2', name: 'picasa'},
-  {id: 'backend:users', name: 'users'},
+  {id: 'backend:db/users', name: 'users'},
   {id: 'mho:server/random', name: 'random'}
 ]);
 
