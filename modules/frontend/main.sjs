@@ -1,3 +1,7 @@
+/**
+   @summary Main frontend application logic
+*/
+
 @ = require([
   'mho:std',
   'mho:app',
@@ -131,6 +135,11 @@ function do_edit_story(session, story_id) {
 
 //----------------------------------------------------------------------
 
+/**
+   @function main
+   @param {Object} [api] Connected [./main.api::] object
+   @summary Main frontend application procedure
+*/
 exports.main = function(api) {
 
   var session = @auth.login(api);

@@ -9,6 +9,10 @@
  * according to the terms contained in the LICENSE file.
  */
 
+/**
+   @summary Application services configuration
+*/
+
 @ = require(['mho:std', 
              {id:'mho:services', name:'services'},
              {id:'mho:flux/kv', name:'kv'}
@@ -39,7 +43,19 @@ function ConfigDB(file, pw, block) {
 //----------------------------------------------------------------------
 // Services
 
+/**
+   @function run
+   @summary Run application services for the duration of `block`
+   @desc
+      In a server setting (i.e. when invoking the app via `conductance serve`),
+      this will be called from the config.mho file, and the services will be
+      live for the full application lifetime.
 
+      Services are reflected into the environment ([mho::env]) under key `services`.
+      E.g. to retrieve a handle for the database, you can use `@env('services').db`.
+      
+   @param {Function} [block]
+*/
 exports.run = function(block) {
 
   //----------------------------------------------------------------------

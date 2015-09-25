@@ -38,6 +38,13 @@ var google_scopes = [
 ];
 
 
+/**
+   @function loginGoogle
+   @summary Perform a Google OAuth authentication
+   @param {String} [origin] Pass `window.location.origin` here
+   @param {Function} [redirect] Client-side redirect function that will receive the OAuth URL
+   @return {String|false} Credentials string if the authentication was successful; `false` otherwise
+*/
 exports.loginGoogle = function(origin, redirect) {
   var authentication_scopes = google_scopes.concat(['openid email']);
   var google_oauth_session = @env('services').google_api_oauth.APISession();
@@ -86,6 +93,15 @@ exports.loginGoogle = function(origin, redirect) {
   
 };
 
+/**
+   @class Session
+   @summary A user api session
+   @function Session
+   @param {String} [origin] Pass `window.location.origin` here
+   @param {String} [credentials] Credentials string
+   @summary Try to obtain a session for the given credentials
+   @return {::Session} Session object, or throws if unsuccessful
+*/
 exports.Session = function(origin, credentials) {
 
   var user;
@@ -99,13 +115,26 @@ exports.Session = function(origin, credentials) {
 
 
   return {
+    /**
+       @function Session.authorizeGoogle
+       @param {Function} [redirect] client-side redirection function
+       @summary Perform Google OAuth authorization to photos API (e.g. in case permissions were revoked - see [::Session::Authorized])
+    */ 
     authorizeGoogle: function(redirect) {
       var rv = google_oauth_session.promptUserAuthorization(google_scopes, redirect, origin);
       return !!rv;
     },
 
+    /**
+       @variable Session.Authorized
+       @summary An [sjs:observable::Observable] indicating the Google API authorization status ('true', 'false')
+     */
     Authorized: google_oauth_session.Authorized,
-    
+
+    /**
+       @function Session.photos
+       @summary Returns a [sjs:sequence::Stream] of 288x288 recent Google photos 
+    */
     photos: function() {
       // size is hardcoded to 288x288 below
       return @batchN(20) ::
@@ -121,9 +150,31 @@ exports.Session = function(origin, credentials) {
         });      
     },
 
+    /**
+       @function Session.createStory
+       @summary Create a new story owned by the session user
+    */
     createStory: -> user .. @stories.createStory(),
+
+    /**
+       @function Session.Stories
+       @summary Return an [sjs:observable::Observable] yielding a [sjs:sequence::Stream] of the ids of all stories of the session user
+    */
     Stories: -> user .. @users.Stories(),
+
+    /**
+       @function Session.StoryData
+       @param {String} [story_id]
+       @summary Return an [sjs:observable::Observable] yielding the data for the given story
+    */ 
     StoryData: story_id -> story_id .. @stories.Data(user),
+
+    /**
+       @function Session.modifyStory
+       @param {String} [story_id]
+       @param {Object} [data]
+       @summary Save the given data as the new story data
+    */
     modifyStory: (story_id, data) -> story_id .. @stories.modifyStory(data, user)
     
   };

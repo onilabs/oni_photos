@@ -1,0 +1,1 @@
+@summary Directory from with public stories are served

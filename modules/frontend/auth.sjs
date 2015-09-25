@@ -1,3 +1,7 @@
+/**
+   @summary User authentication
+*/
+
 @ = require([
   'mho:std',
   'mho:app',
@@ -8,6 +12,12 @@
 var CREDENTIALS_KEY = 'oni_photos_creds';
 
 //----------------------------------------------------------------------
+/**
+   @function login
+   @summary Login the user, potentially displaying a login/oauth dialog
+   @param {Object} [api] Connected [main.api::] object
+   @return {Object} Authenticated [main.api::Session] object
+*/
 function login(api) {
   if (localStorage[CREDENTIALS_KEY]) {
     try {

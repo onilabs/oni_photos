@@ -1,4 +1,6 @@
-// stuff that will go into conductance
+/**
+   @summary Stuff that will go into conductance
+*/
 
 @ = require([
   'mho:std',
@@ -10,8 +12,8 @@
 var cmd = exports.cmd = {};
 
 /**
-   @function Click
-   @summary XXX
+   @function cmd.Click
+   @summary XXX write me
 */
 cmd.Click = function(element, cmd, param) {
 
@@ -59,8 +61,8 @@ cmd.Click = function(element, cmd, param) {
 };
 
 /**
-   @function stream
-   @summary XXX
+   @function cmd.stream
+   @summary XXX write me
 */
 cmd.stream = function(/*[dom_root], [commands]*/) {
 
@@ -155,6 +157,10 @@ cmd.stream = function(/*[dom_root], [commands]*/) {
 
 
 // helper to display a popup window
+/** 
+    @function withPopupWindow
+    @summary XXX write me
+*/
 function withPopupWindow(block) {
   var win = window.open('', '', 'width=972,height=660,modal=yes,alwaysRaised=yes');
   waitfor {
