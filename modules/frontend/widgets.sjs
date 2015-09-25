@@ -138,19 +138,13 @@ function HorizontalPhotoStream(session) {
     }
   ");
 
-  // just taking 50 most recent photos for now
-  // XXX appending via mechanism, so that the rest of the page loads fast
-  return @Div() .. CSS() .. @Mechanism(
-    function(node) {
-      node .. @appendContent(
-        session.photos() ..
-          @take(50) ..
-          @map(x -> @Img() ..
-                 @Attrib('src', x.url) ..
-                 @backfill.cmd.Click('click-photo', x.url)
-              )
-      )
-    });
+  return @Div() .. CSS() ::
+    @ScrollStream({tolerance:1000}) ::
+    session.photos() .. 
+        @transform(x -> @Img() ..
+                          @Attrib('src', x.url) ..
+                          @backfill.cmd.Click('click-photo', x.url)
+                  );
 }
 exports.HorizontalPhotoStream = HorizontalPhotoStream;
 
