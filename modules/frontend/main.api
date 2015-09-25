@@ -139,15 +139,15 @@ exports.Session = function(origin, credentials) {
       // size is hardcoded to 288x288 below
       return @batchN(20) ::
         @Stream(function(r) {
-          var photos = google_oauth_session .. @picasa.recentPhotos({thumbsize:'288c'});
+          var photos = google_oauth_session .. @picasa.recentPhotos({thumbsize:'750c'});
           photos .. @each {
             |entry|
             // return the largest thumbnail
-            var thumbnail = entry["media$group"]["media$thumbnail"] .. @find(item -> item.height == 288 || item.width == 288, null);
+            var thumbnail = entry["media$group"]["media$thumbnail"] .. @find(item -> item.height == 750 || item.width == 750, null);
             if (thumbnail)
               r(thumbnail);
           }
-        });      
+        });
     },
 
     /**
