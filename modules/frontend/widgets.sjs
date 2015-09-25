@@ -1,3 +1,7 @@
+/**
+   @summary UI widgets
+*/
+
 @ = require([
   'mho:std',
   'mho:app',
@@ -7,8 +11,13 @@
 ]);
 
 //----------------------------------------------------------------------
-// Action
-
+/**
+   @function Action
+   @summary XXX write me
+   @param {mho:surface::HtmlFragment} [content]
+   @param {String} [cmd]
+   @param {Object|Function} [param]
+*/
 function Action(content, cmd, param) {
   return @Span(content) ..
     @Class('action') ..
@@ -72,10 +81,10 @@ var PageStyle = @CSS("
    @function Page
    @summary A 'page' in our application
    @param {Object} [settings]
-   @setting {sjs:surface::HtmlFragment} [title]
-   @setting {sjs:surface::HtmlFragment} [title_action]
-   @setting {sjs:surface::HtmlFragment} [body]
-   @setting {sjs:surface::HtmlFragment} [footer]
+   @setting {mho:surface::HtmlFragment} [title]
+   @setting {mho:surface::HtmlFragment} [title_action]
+   @setting {mho:surface::HtmlFragment} [body]
+   @setting {mho:surface::HtmlFragment} [footer]
 */
 function Page(settings) {
   return @Div() .. PageStyle ::
@@ -100,7 +109,11 @@ exports.Page = Page;
 
 
 //----------------------------------------------------------------------
-
+/**
+   @function VerticalPhotoStream
+   @param {Object} [session]
+   @summary XXX write me
+*/
 function VerticalPhotoStream(session) {
   var width = document.body.clientWidth-20;
   var image_size = Math.min(288, Math.floor(width/2-4));
@@ -121,6 +134,11 @@ exports.VerticalPhotoStream = VerticalPhotoStream;
 
 //----------------------------------------------------------------------
 
+/**
+   @function HorizontalPhotoStream
+   @param {Object} [session]
+   @summary XXX write me
+*/
 function HorizontalPhotoStream(session) {
   var width = document.body.clientWidth;
   var image_size = Math.min(288, Math.floor(width/2.5-4));
@@ -149,7 +167,11 @@ function HorizontalPhotoStream(session) {
 exports.HorizontalPhotoStream = HorizontalPhotoStream;
 
 //----------------------------------------------------------------------
-
+/**
+   @function StoryEditWidget
+   @summary XXX write me
+   @param {sjs:observable::Observable} [story_content]
+*/
 function StoryEditWidget(StoryContent) {
   var width = document.body.clientWidth-20;
   var image_size = Math.min(288, Math.floor(width/2-8));
