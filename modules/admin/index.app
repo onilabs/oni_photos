@@ -1,17 +1,28 @@
 @ = require([
   'mho:std',
-  'mho:app',
-  {id:'mho:services', name:'services'}
+  'mho:app'
+]);
+
+var links = [
+  {
+    url:   './services/',
+    descr: 'Configuration of Application Services'
+  },
+  {
+    url:   '/doc/',
+    descr: 'Code Documentation'
+  },
+  {
+    url:   './db/',
+    descr: 'Database Admin'
+  }
+]
+
+@mainContent .. @appendContent([
+  @PageHeader('Application Administration/Development'),
+
+  @Ul(links .. @map({url, descr} -> @A(descr) .. @Attrib('href', url)))
+
 ]);
 
 
-@mainContent .. @appendContent(@PageHeader('Application Administration'));
-
-@withAPI('./admin.api') {
-  |api|
-
-  @mainContent .. @appendContent(api.servicesRegistry .. @services.configUI) {
-    ||
-    hold();
-  }
-}

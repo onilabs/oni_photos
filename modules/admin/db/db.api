@@ -1,0 +1,5 @@
+@ = require([
+  'mho:std'
+]);
+
+exports.db = @env('services').db;
