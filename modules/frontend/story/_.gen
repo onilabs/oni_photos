@@ -12,39 +12,66 @@ exports.filetype = 'html';
 
 var CSS = `
   <style type="text/css">
-  body   { margin: 0px;
-           background-color: #2f2e2e;
-           color: #6b6b6b;
-           font-family: sans-serif;
-         }
-             
-    .block { width: 50%;
-             display: inline-block;
-           }
-    img    { width: 100%;
-           }
+  * {
+    box-sizing: border-box;
+  }
+  body {
+    margin: 0px;
+    background-color: #fff;
+    color: #6b6b6b;
+    font-family: sans-serif;
+  }
+  .story-wrapper {
+    width: 80%;
+    margin: 200px auto;
+  }
+  .story-block {
+    width: 50%;
+    border-color: transparent;
+    border-style: solid;
+    border-width: 3px 0;
+    display: block;
+    float: left;
+  }
+  .story-block:nth-child(even) {
+    border-left-width: 3px;
+  }
+  .story-block:nth-child(odd) {
+    border-right-width: 3px;
+  }
+  .story-image {
+    position:relative;
+    width: 100%;
+    height: 0;
+    padding-bottom: 75%;
+    background-repeat: no-repeat;
+    background-position: center center;
+    background-size: cover;
+  }
+  @media (max-width: 530px) {
+    .story-wrapper {
+      width: 100%;
+    }
+  }
   </style>`;
 
 exports.content = function(params) {
 
   try {
-  
     var story_id = params.path.substring(1);
 
     function Block(descriptor) {
-      var rv = @Div() .. @Class('block');
+      var rv = @Div() .. @Class('story-block');
       if (descriptor.type === 'img')
-        rv = rv .. @Content(@Img() .. @Attrib('src', descriptor.url));
+        rv = rv .. @Content(@Div() .. @Class('story-image') .. @Attrib('style', 'background-image: url(' + descriptor.url + ')'));
       return rv;
     }
-    
     return @Document({
       title: 'Photo Story',
       template: 'plain',
       head: CSS
-    }) ::
+    }) :: @Div() .. @Class('story-wrapper') ::
       `
-      <h1>This photo story brought to you by Oni Conductance (TM) (C)</h1>
       ${
         @stories.getPublicStory(story_id).content .. @map(
           row -> row .. @map(Block)
