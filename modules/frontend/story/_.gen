@@ -75,6 +75,8 @@ exports.content = function(params) {
     return @Document({
       title: 'Photo Story',
       template: 'plain',
+      externalScripts: ["/__mho/surface/bootstrap/jquery-1.10.2.min.js"],
+      main: "./story.sjs",
       head: CSS
     }) :: @Div() .. @Class('story-wrapper') ::
       `
