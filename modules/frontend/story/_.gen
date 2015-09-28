@@ -23,7 +23,13 @@ var CSS = `
   }
   .story-wrapper {
     width: 80%;
-    margin: 200px auto;
+    max-width: 930px;
+    margin: 100px auto;
+  }
+  .story-header {
+    font-size: 36px;
+    color: #333;
+    margin: 0 0 50px 0;
   }
   .story-block {
     width: 50%;
@@ -72,11 +78,14 @@ exports.content = function(params) {
       head: CSS
     }) :: @Div() .. @Class('story-wrapper') ::
       `
+      <div class="story-header">Untitled story</div>
+      <div>
       ${
         @stories.getPublicStory(story_id).content .. @map(
           row -> row .. @map(Block)
         )
       }
+      </div>
       `;
   }
   catch (e) {
