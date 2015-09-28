@@ -48,9 +48,14 @@ function lightboxBehavior(selector) {
           height: 600,
           margin: '-300px 0 0 -400px'});
         $('div', clone).removeClass('hidden');
-        // setTimeout(function(){
-        //   clone.css({'background-image': 'url(' + shot.image_url + ')'});
-        // }, 0);
+        setTimeout(function(){
+          clone.css({
+            'background-image':
+              shot[0].style.backgroundImage.replace('750', '1200') +
+              ',' +
+              shot[0].style.backgroundImage
+          });
+        }, 100);
       },100);
     });
 
