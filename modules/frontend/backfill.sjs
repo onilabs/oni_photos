@@ -109,7 +109,8 @@ cmd.stream = function(/*[dom_root], [commands]*/) {
           root .. @nodes.Nodes('[__oni_cmd_emitter]') ..
             @each {
               |node|
-              if (node.__oni_cmd.isActive() ||
+              if (!node.__oni_cmd || /* node has probably just been added */
+                  node.__oni_cmd.isActive() ||
                   (bound_commands && bound_commands.indexOf(node.__oni_cmd.cmd) === -1))
                 continue;
               cmd_nodes.push(node.__oni_cmd);
