@@ -204,6 +204,9 @@ function StoryEditWidget(StoryContent) {
             if (descriptor.type === 'img') {
               return @Img() .. @Attrib('src', descriptor.url);
             }
+            else if (descriptor.type === 'txt') {
+              return @Div() .. @Style('text-align:center') :: descriptor.content;
+            }
           }
         );
 

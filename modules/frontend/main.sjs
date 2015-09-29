@@ -98,7 +98,7 @@ function do_edit_story(session, story_id) {
 
   function editing_logic() {
     var selected_block;
-    @backfill.cmd.stream(['done', 'select-block', 'click-photo']) .. @each {
+    @backfill.cmd.stream(['done', 'select-block', 'click-photo', 'set-text']) .. @each {
       |[cmd,param]|
       
       if (cmd === 'select-block') {
@@ -111,6 +111,13 @@ function do_edit_story(session, story_id) {
       if (cmd === 'click-photo') {
         if (selected_block)
           (selected_block .. @field.Value()).set({type:'img', url:param});
+      }
+
+      if (cmd === 'set-text') {
+        if (selected_block) {
+          // XXX go into editing mode
+          (selected_block .. @field.Value()).set({type:'txt', content: 'Hey!'});
+        }
       }
       
       if (cmd === 'done') return;
