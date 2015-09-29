@@ -85,8 +85,8 @@ var CSS = `
     right: 0;
     bottom: 0;
     z-index: 4;
-    background: #111;
-    opacity: .9;
+    background: #fff;
+    opacity: 1;
     pointer-events: none;
   }
   .story-fog.hidden {
