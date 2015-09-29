@@ -107,7 +107,11 @@ exports.content = function(params) {
     function Block(descriptor) {
       var rv = @Div() .. @Class('story-block');
       if (descriptor.type === 'img') {
-        rv = rv .. @Content(@Div() .. @Class('story-image') .. @Attrib('style', 'background-image: url(' + descriptor.url + ')'));
+        rv = rv .. @Content(@Div() .. @Class('story-image')
+          .. @Attrib('style', 'background-image: url(' + descriptor.url + ')')
+          .. @Attrib('data-width', 800)
+          .. @Attrib('data-height', 800)
+        );
       }
       else if (descriptor.type === 'txt') {
         rv = rv .. @Content(@Div() .. @Class('story-txt') :: descriptor.content);

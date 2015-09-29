@@ -24,6 +24,20 @@ function lightboxBehavior(selector) {
       if (clone) {
         return;
       }
+      var width = parseInt(shot.attr('data-width'), 10);
+      var height = parseInt(shot.attr('data-height'), 10);
+      var windowWidth = $(window).width();
+      var windowHeight = $(window).height();
+      var zoomedWidth = windowWidth;
+      var zoomedHeight = windowHeight;
+
+      if (windowWidth > windowHeight) {
+        zoomedHeight = windowHeight;
+        zoomedWidth = windowHeight / (width / height);
+      } else {
+
+      }
+
       clone = shot.clone()
         .attr('class','story-image-zoomed')
         .css({
@@ -39,14 +53,15 @@ function lightboxBehavior(selector) {
         $(document.body).css({overflow: 'hidden'});
         $(document).one('click', clickRef);
       }, 0);
-
       setTimeout(function() {
         clone.css({
-          top: '50%',
-          left: '50%',
-          width: 800,
-          height: 600,
-          margin: '-300px 0 0 -400px'});
+          top: 0,
+          left: 0,
+          width: zoomedWidth,
+          height: zoomedHeight,
+          'margin-left': (windowWidth - zoomedWidth) / 2,
+          'margin-top': (windowHeight - zoomedHeight) / 2,
+        });
         $('div', clone).removeClass('hidden');
         setTimeout(function(){
           clone.css({
