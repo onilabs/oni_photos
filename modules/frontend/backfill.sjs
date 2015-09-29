@@ -52,7 +52,7 @@ cmd.Click = function(element, cmd, param) {
     @On('click',
         {handle:@dom.preventDefault},
         ev -> emitter ? emitter.emit([cmd,
-                                      param ?
+                                      param!==undefined ?
                                       (typeof param === 'function' ? param(ev) : param) :
                                       ev
                                      ])
