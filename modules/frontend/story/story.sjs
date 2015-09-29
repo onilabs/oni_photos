@@ -28,15 +28,17 @@ function lightboxBehavior(selector) {
       var height = parseInt(shot.attr('data-height'), 10);
       var windowWidth = $(window).width();
       var windowHeight = $(window).height();
-      var zoomedWidth = windowWidth;
-      var zoomedHeight = windowHeight;
 
-      if (windowWidth > windowHeight) {
-        zoomedHeight = windowHeight;
-        zoomedWidth = windowHeight / (width / height);
-      } else {
+      // maximum zoom in width & height:
+      var maxWidthZoom = windowWidth/width;
+      var maxHeightZoom = windowHeight/height;
 
-      }
+      // take the smaller of the two (because we don't want to overflow!):
+      var zoom = Math.min(maxWidthZoom, maxHeightZoom);
+
+      // now determine the w/h from that:
+      var zoomedWidth = width*zoom;
+      var zoomedHeight = height*zoom;
 
       clone = shot.clone()
         .attr('class','story-image-zoomed')
