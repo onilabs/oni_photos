@@ -116,7 +116,7 @@ function do_edit_story(session, story_id) {
       if (cmd === 'set-text') {
         if (selected_block) {
           // XXX go into editing mode
-          (selected_block .. @field.Value()).set({type:'txt', content: 'Hey!'});
+          (selected_block .. @field.Value()).set({type:'txt', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque volutpat libero ut nisl sagittis sagittis. Nulla facilisi. Morbi malesuada sit amet orci non fermentum. Aenean mollis ullamcorper rutrum. Aliquam accumsan libero in mi laoreet laoreet!'});
         }
       }
       
