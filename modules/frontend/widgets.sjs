@@ -222,3 +222,95 @@ function StoryEditWidget(StoryContent) {
   
 }
 exports.StoryEditWidget = StoryEditWidget;
+
+
+// tabs: [{ title, content }]
+function TabWidget(tabs) {
+
+  var l = tabs .. @count;
+
+  var TabHeaderCSS = @CSS(
+    `
+    > div { display: inline-block;
+            width: ${100/l}%;
+            cursor: pointer;
+          }
+    > div[active] { color:white; }
+    `)
+
+  var ActiveTab = @ObservableVar(0);
+
+  var CmdHandler = @Mechanism(function(node) {
+    @backfill.cmd.stream(['tab']) .. @each {
+      |[cmd, param]|
+      ActiveTab.set(param);
+    }
+  });
+
+  var rv =
+    @Div ::
+    [
+      // tab header
+      @Div .. TabHeaderCSS .. @Class('tab-header') .. CmdHandler ::
+        tabs ..
+          @indexed ..
+          @map([i, {title}] -> @Div(title) ..
+                                 @backfill.cmd.Click('tab', i) ..
+                                 @Attrib('active', ActiveTab .. @transform(tab -> tab == i))
+              )
+                               
+      ,
+      // tab content
+      @Div() .. @Class('tab-content') ::
+        ActiveTab .. @transform(index -> tabs[index].content)
+    ];
+
+  return rv;
+}
+
+/**
+   @function storyEditPalette
+   @summary Tools palette for editing stories
+   @param {Object} [session]
+   @desc
+     Emits the commands:
+
+     'set-text' -> set current selection to 'text'
+     'click-photo' -> set current selection to photo url given as parameter
+     'set-full-width' -> set current row to 'full-width' layout
+     'set-split-row' -> set current row to split layout
+*/
+function StoryEditPalette(session) {
+
+  var PaletteCSS = @CSS(
+    `
+       .tab-header {
+         padding:20px;
+         text-align: center;
+       }
+
+       .tab-content {
+         min-height: 300px;
+         text-align: center;
+       }
+    `);
+
+  return TabWidget .. PaletteCSS ::
+    [
+      {
+        title:   'Photos',
+        content: HorizontalPhotoStream(session)
+      },
+      { title: 'Text',
+        content: Action('set-text') :: "Text"
+      },
+      { title: 'Layout',
+        content: [ Action('set-full-width') :: "Full Width",
+                  @Br(),
+                  Action('set-split-row') :: "Split"
+                 ]
+      }
+    ];
+}
+exports.StoryEditPalette = StoryEditPalette;
+

@@ -75,9 +75,6 @@ function do_edit_story(session, story_id) {
     throw new Error("write me");
   };
   
-//  var Story = @ObservableVar(session.StoryData(story_id) .. @current);
-
-  
   document.body .. @appendContent(
     @field.Field({Value:Story}) ..
       @field.FieldMap() ::  
@@ -87,8 +84,7 @@ function do_edit_story(session, story_id) {
           
           body: @widgets.StoryEditWidget(Story),
           
-          footer: @Div ..@Style('margin:10px;') ::
-            @widgets.HorizontalPhotoStream(session)      
+          footer: @widgets.StoryEditPalette(session)      
         })
   ) {
     ||
