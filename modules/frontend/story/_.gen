@@ -11,6 +11,7 @@
 exports.filetype = 'html';
 
 var gridPadding = '8px';
+var colorText = '#3E2C2C';
 var CSS = `
   <meta name="viewport" content="user-scalable=no, width=device-width">
   <style type="text/css">
@@ -30,7 +31,7 @@ var CSS = `
     margin: 0 auto;
   }
   .story-header {
-    color: #3E2C2C;
+    color: #{colorText};
     margin: 100px 0 100px 0;
     text-align: center;
   }
@@ -47,7 +48,7 @@ var CSS = `
   .story-footer {
     font-size: 20px;
     font-weight: 400;
-    color: #3E2C2C;
+    color: #{colorText};
     margin: 100px auto 100px auto;
     width: 400px;
     text-align: center;
@@ -65,6 +66,18 @@ var CSS = `
     display: block;
     float: left;
   }
+  .story-block:nth-child(even) {
+    border-left-width: #{gridPadding};
+    // clear: right;
+  }
+  .story-block:nth-child(odd) {
+    border-right-width: #{gridPadding};
+    // clear: left;
+  }
+  .story-block.is-fullwidth {
+    width: 100%;
+    // clear: right;
+  }
   .story-content:before,
   .story-content:after {
       content: " "; /* 1 */
@@ -73,15 +86,6 @@ var CSS = `
 
   .story-content:after {
       clear: both;
-  }
-
-  .story-block:nth-child(even) {
-    border-left-width: #{gridPadding};
-    clear: right;
-  }
-  .story-block:nth-child(odd) {
-    border-right-width: #{gridPadding};
-    clear: left;
   }
   .story-image {
     width: 100%;
@@ -92,11 +96,13 @@ var CSS = `
     background-size: cover;
   }
   .story-txt {
-    font-size: 16px;
+    font-size: 20px;
     line-height: 1.4em;
-    padding-right: 20px;
-    font-weight: 300;
-    color: #555;
+    font-weight: 400;
+    color: #{colorText};
+    text-align: center;
+
+    padding: 100px;
   }
   .story-image-zoomed {
     -webkit-transform: translateZ(0);
@@ -144,8 +150,8 @@ exports.content = function(params) {
   try {
     var story_id = params.path.substring(1);
 
-    function Block(descriptor) {
-      var rv = @Div() .. @Class('story-block');
+    function Block(descriptor, rowSize) {
+      var rv = @Div() .. @Class('story-block' + (rowSize === 1 ? ' is-fullwidth' : ''));
       if (descriptor.type === 'img') {
         rv = rv .. @Content(@Div() .. @Class('story-image')
           .. @Attrib('style', 'background-image: url(' + descriptor.url + ')')
@@ -158,6 +164,12 @@ exports.content = function(params) {
       }
       return rv;
     }
+
+    var content = @stories.getPublicStory(story_id).content;
+    content.splice(2, 0, [{
+      type: 'txt',
+      content: 'Toddling up the mountain he plants his feet in the mountain soil to rise like a mountain in the land of mountains. \n The whole mountain lives inside the mountain child And in the lap of the mountain lives the scurrying mountain child.'
+    }]);
     return @Document({
       title: 'Photo Story',
       template: 'plain',
@@ -172,8 +184,10 @@ exports.content = function(params) {
       </div>
       <div class="story-content">
       ${
-        @stories.getPublicStory(story_id).content .. @map(
-          row -> row .. @map(Block)
+        content .. @map(
+          row -> row .. @map(function(block) {
+            return Block(block, row.length)
+          })
         )
       }
       </div>
