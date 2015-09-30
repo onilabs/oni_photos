@@ -54,8 +54,8 @@ var CSS = `
     text-align: center;
   }
   .story-footer-connect {
-    width: 90px;
-    margin-top: 20px;
+    width: 110px;
+    margin-top: 10px;
   }
   .story-block {
     position: relative;
