@@ -52,6 +52,10 @@ var CSS = `
     width: 400px;
     text-align: center;
   }
+  .story-footer-connect {
+    width: 90px;
+    margin-top: 20px;
+  }
   .story-block {
     position: relative;
     width: 50%;
@@ -173,7 +177,10 @@ exports.content = function(params) {
         )
       }
       </div>
-      <div class="story-footer">Were you there? Help Sarah tell this story by dropping related pictures on this page.</div>
+      <div class="story-footer">
+        Were you there? Help Sarah tell this story by dropping related pictures on this page.
+        <img class="story-footer-connect" src="/assets/connect.svg" width="80"/>
+      </div>
       `;
   }
   catch (e) {
