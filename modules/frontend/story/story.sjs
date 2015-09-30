@@ -8,12 +8,24 @@ $().ready(function() {
 
 var clone;
 
-function clickRef(event){
+function clickRef(event, shot){
   $(document).off('click');
   $(window).off('scroll');
   event.preventDefault();
-  $(clone).remove();
-  clone = undefined;
+  clone.css({
+    top: $(document).scrollTop() + shot.offset().top - $(window).scrollTop() ,
+    left: shot.offset().left,
+    width: shot[0].clientWidth,
+    height: shot[0].clientHeight,
+    'margin-left': '',
+    'margin-top': '',
+  });
+  setTimeout(function() {
+    $(clone).remove();
+    clone = undefined;
+    shot.css({visibility:'visible'});
+  }, 400);
+
   $('.story-fog').addClass('hidden');
 
 }
@@ -45,17 +57,22 @@ function lightboxBehavior(selector) {
       clone = shot.clone()
         .attr('class','story-image-zoomed')
         .css({
-          top: shot.offset().top - $(window).scrollTop() ,
+          top: $(document).scrollTop() + shot.offset().top - $(window).scrollTop() ,
           left: shot.offset().left,
           width: shot[0].clientWidth,
           height: shot[0].clientHeight
         })
         .appendTo(document.body);
+      shot.css({visibility:'hidden'});
 
       setTimeout(function(){
         $('.story-fog').removeClass('hidden');
-        $(document).on('click', clickRef);
-        $(window).on('scroll', clickRef);
+        $(document).on('click', function() {
+          clickRef(event, shot);
+        });
+        $(window).on('scroll', function() {
+          clickRef(event, shot);
+        });
       }, 0);
       setTimeout(function() {
         clone.css({
@@ -64,7 +81,7 @@ function lightboxBehavior(selector) {
           width: zoomedWidth,
           height: zoomedHeight,
           'margin-left': (windowWidth - zoomedWidth) / 2,
-          'margin-top': (windowHeight - zoomedHeight) / 2,
+          'margin-top': $(document).scrollTop() + (windowHeight - zoomedHeight) / 2,
         });
         $('div', clone).removeClass('hidden');
         setTimeout(function(){
