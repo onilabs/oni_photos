@@ -14,7 +14,7 @@ var gridPadding = '8px';
 var CSS = `
   <meta name="viewport" content="user-scalable=no, width=device-width">
   <style type="text/css">
-  @import url(https://fonts.googleapis.com/css?family=Roboto:400,300);
+  @import url(https://fonts.googleapis.com/css?family=Roboto:700,400,300);
   * {
     box-sizing: border-box;
   }
@@ -27,12 +27,30 @@ var CSS = `
   .story-wrapper {
     width: 80%;
     max-width: 850px;
-    margin: 100px auto;
+    margin: 0 auto;
   }
   .story-header {
+    color: #3E2C2C;
+    margin: 100px 0 100px 0;
+    text-align: center;
+  }
+  .story-title {
     font-size: 36px;
-    color: #333;
-    margin: 0 0 50px 0;
+    font-weight: 700;
+  }
+  .story-author {
+    margin-top: -20px;
+    font-size: 18px;
+    font-weight: 300;
+    color: #7E53A3;
+  }
+  .story-footer {
+    font-size: 20px;
+    font-weight: 400;
+    color: #3E2C2C;
+    margin: 100px auto 100px auto;
+    width: 400px;
+    text-align: center;
   }
   .story-block {
     position: relative;
@@ -43,6 +61,16 @@ var CSS = `
     display: block;
     float: left;
   }
+  .story-content:before,
+  .story-content:after {
+      content: " "; /* 1 */
+      display: table; /* 2 */
+  }
+
+  .story-content:after {
+      clear: both;
+  }
+
   .story-block:nth-child(even) {
     border-left-width: #{gridPadding};
     clear: right;
@@ -54,7 +82,7 @@ var CSS = `
   .story-image {
     width: 100%;
     height: 0;
-    padding-bottom: 62%;
+    padding-bottom: 100%;
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
@@ -134,14 +162,18 @@ exports.content = function(params) {
       head: CSS
     }) :: @Div() .. @Class('story-wrapper') ::
       `
-      <div class="story-header">Untitled story</div>
-      <div>
+      <div class="story-header">
+        <h1 class="story-title">That time we went to the India</h1>
+        <div class="story-author">By Sarah Timmermans</div>
+      </div>
+      <div class="story-content">
       ${
         @stories.getPublicStory(story_id).content .. @map(
           row -> row .. @map(Block)
         )
       }
       </div>
+      <div class="story-footer">Were you there? Help Sarah tell this story by dropping related pictures on this page.</div>
       `;
   }
   catch (e) {
