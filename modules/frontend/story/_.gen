@@ -10,10 +10,11 @@
 
 exports.filetype = 'html';
 
+var gridPadding = '8px';
 var CSS = `
   <meta name="viewport" content="user-scalable=no, width=device-width">
   <style type="text/css">
-  @import url(https://fonts.googleapis.com/css?family=Roboto);
+  @import url(https://fonts.googleapis.com/css?family=Roboto:400,300);
   * {
     box-sizing: border-box;
   }
@@ -38,34 +39,37 @@ var CSS = `
     width: 50%;
     border-color: transparent;
     border-style: solid;
-    border-width: 10px 0;
+    border-width: #{gridPadding} 0;
     display: block;
     float: left;
   }
   .story-block:nth-child(even) {
-    border-left-width: 10px;
+    border-left-width: #{gridPadding};
     clear: right;
   }
   .story-block:nth-child(odd) {
-    border-right-width: 10px;
+    border-right-width: #{gridPadding};
     clear: left;
   }
   .story-image {
     width: 100%;
     height: 0;
-    padding-bottom: 75%;
+    padding-bottom: 62%;
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
   }
   .story-txt {
-    font-size: 18px;
-    padding-right: 50px;
+    font-size: 16px;
+    line-height: 1.4em;
+    padding-right: 20px;
+    font-weight: 300;
+    color: #555;
   }
   .story-image-zoomed {
     -webkit-transform: translateZ(0);
     -webkit-transition: all 250ms cubic-bezier(0.77, 0, 0.175, 1) 100ms;
-    position: fixed;
+    position: absolute;
     width: 400px;
     height: 300px;
     top: 50px;
@@ -96,6 +100,9 @@ var CSS = `
   @media (max-width: 530px) {
     .story-wrapper {
       width: 100%;
+    }
+    .story-block:nth-child(odd) .story-txt, .story-header {
+      padding-left: 20px;
     }
   }
   </style>`;
