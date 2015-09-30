@@ -135,11 +135,14 @@ exports.Session = function(origin, credentials) {
        @function Session.photos
        @summary Returns a [sjs:sequence::Stream] of 288x288 recent Google photos 
     */
-    photos: function() {
-      // size is hardcoded to 288x288 below
+    photos: function(filter) {
+      // size is hardcoded
       return @batchN(20) ::
         @Stream(function(r) {
-          var photos = google_oauth_session .. @picasa.recentPhotos({thumbsize:'750c'});
+          var photos = google_oauth_session .. @picasa.recentPhotos({
+            thumbsize:'750c',
+            q:filter
+          });
           photos .. @each {
             |entry|
             // return the largest thumbnail

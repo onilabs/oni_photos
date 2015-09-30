@@ -155,14 +155,23 @@ function HorizontalPhotoStream(session) {
       margin: 2px;
     }
   ");
+  
+  var Filter = @ObservableVar('');
 
-  return @Div() .. CSS() ::
-    @ScrollStream({tolerance:1000}) ::
-    session.photos() .. 
-        @transform(x -> @Img() ..
-                          @Attrib('src', x.url) ..
-                          @backfill.cmd.Click('click-photo', x.url)
-                  );
+  return @Div() :: 
+    [
+      'Filter:',
+      @Input(Filter),
+      @Div() .. CSS() ::
+        Filter .. @transform(filter ->
+                             @ScrollStream({tolerance:1000}) ::
+                             session.photos(filter) .. 
+                             @transform(x -> @Img() ..
+                                        @Attrib('src', x.url) ..
+                                        @backfill.cmd.Click('click-photo', x.url)
+                                       )
+                            )
+    ];
 }
 exports.HorizontalPhotoStream = HorizontalPhotoStream;
 
