@@ -6,7 +6,8 @@
   'mho:std',
   'mho:app',
   {id:'mho:surface/nodes', name:'nodes'},
-  {id:'sjs:sjcl', name:'sjcl'}
+  {id:'sjs:sjcl', name:'sjcl'},
+  {id:'mho:surface/field', name:'field'}
 ]);
 
 var cmd = exports.cmd = {};
@@ -213,3 +214,40 @@ function tailspawn(f) {
 }
 exports.tailspawn = tailspawn;
 
+//----------------------------------------------------------------------
+
+function PlainTextEditor() {
+  // XXX plaintext-only is webkit only
+  return @Div() .. 
+    @Attrib('contenteditable', 'plaintext-only') ..
+    @Mechanism(function(node) {
+      var current_val;
+      waitfor {
+        // field -> content
+        @field.Value() .. @each.track {
+          |val|
+          if (@eq(val, current_val)) continue;
+          current_val = val;
+          //console.log("field -> content #{val .. @inspect}");
+          // xxx legacy support:
+          if (!Array.isArray(val)) val = [val];
+          content = val .. @join(`<br>`);
+          node .. @replaceContent(content);
+        }
+      }
+      and {
+        // content -> field
+        @events(node, 'input') .. @each.track {
+          |ev|
+          var val = node.innerHTML.split('<br>');
+          //console.log("content -> field #{val .. @inspect}");
+          if (@eq(val, current_val)) continue;
+          current_val = val;
+          @field.Value().set(val);
+        }
+      }
+    });
+    
+
+}
+exports.PlainTextEditor = PlainTextEditor;

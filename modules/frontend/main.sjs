@@ -102,8 +102,21 @@ function do_edit_story(session, story_id) {
       |[cmd,param]|
       
       if (cmd === 'select-block') {
-        if (selected_block)
+        if (selected_block) {
           selected_block.removeAttribute('selected');
+          
+          // remove the focus if we're moving from contenteditable to not-contenteditable:
+          var old_editable = selected_block.querySelector('[contenteditable]');
+          var new_editable = param.querySelector('[contenteditable]');
+
+          if (old_editable && !new_editable) {
+            // see http://stackoverflow.com/questions/4878713/how-can-i-blur-a-div-where-contenteditable-true
+            old_editable.blur();
+            window.getSelection().removeAllRanges();
+            hold(0);
+          }
+
+        }
         selected_block = param;
         selected_block.setAttribute('selected', true);
       }
@@ -115,8 +128,7 @@ function do_edit_story(session, story_id) {
 
       if (cmd === 'set-text') {
         if (selected_block) {
-          // XXX go into editing mode
-          (selected_block .. @field.Value()).set({type:'txt', content: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quisque volutpat libero ut nisl sagittis sagittis. Nulla facilisi. Morbi malesuada sit amet orci non fermentum. Aenean mollis ullamcorper rutrum. Aliquam accumsan libero in mi laoreet laoreet!'});
+          (selected_block .. @field.Value()).set({type:'txt', content: ''});
         }
       }
       
@@ -125,8 +137,10 @@ function do_edit_story(session, story_id) {
   }
 
   function synchronize_from_upstream() {
-    Upstream .. @each {
+    Upstream .. @each.track {
       |upstream|
+      // XXX need to fix synchronization for real
+      hold(2000);
       if (!@eq(upstream, Story .. @current)) {
         console.log('setting from upstream');
         Story.set(upstream);

@@ -193,22 +193,50 @@ function StoryEditWidget(StoryContent) {
       width: 100%;
       height: 100%;
     }
+    .block > div {
+      overflow: auto;
+      height: 100%;
+    }
   ");
 
   function col_template() {
     var rv = @Div() ..
       @Class('block') ..
-      @backfill.cmd.Click('select-block', ev -> ev.currentTarget) ::
-        @field.Value() .. @transform(
-          function(descriptor) {
+      @backfill.cmd.Click('select-block', ev -> ev.currentTarget) ..
+        @Mechanism(function(node) {
+          var current_type;
+          @field.Value() .. @each {
+            |descriptor|
+            if (descriptor.type === current_type) 
+              continue;
+            current_type = descriptor.type;
             if (descriptor.type === 'img') {
-              return @Img() .. @Attrib('src', descriptor.url);
+              node .. @replaceContent(
+                @Img() .. 
+                  @Attrib('src', 
+                          @field.Value() .. @transform({url} -> url)
+                         )
+              );
             }
             else if (descriptor.type === 'txt') {
-              return @Div() .. @Style('text-align:center') :: descriptor.content;
+              node .. @replaceContent(
+                @field.FieldMap() ::
+                  @Div() ::
+                    [
+                      // xxx the span is a hack to keep the 'type' value
+                      @Span() .. @field.Field('type'),
+                      @field.Field('content') ::
+                        @backfill.PlainTextEditor() ..
+                        @Style('height:100%')
+                    ]
+              )                
             }
-          }
-        );
+            else {
+              node .. @replaceContent(@Div() :: 'unknown block');
+            }
+                  
+          } /* @each */
+        });
 
     return rv;
   }
@@ -253,19 +281,18 @@ function TabWidget(tabs) {
   var rv =
     @Div ::
     [
-      // tab header
+      // tab content
+      @Div() .. @Class('tab-content') ::
+        ActiveTab .. @transform(index -> tabs[index].content),
+
+      // tab footer
       @Div .. TabHeaderCSS .. @Class('tab-header') .. CmdHandler ::
         tabs ..
           @indexed ..
           @map([i, {title}] -> @Div(title) ..
                                  @backfill.cmd.Click('tab', i) ..
                                  @Attrib('active', ActiveTab .. @transform(tab -> tab == i))
-              )
-                               
-      ,
-      // tab content
-      @Div() .. @Class('tab-content') ::
-        ActiveTab .. @transform(index -> tabs[index].content)
+              )                               
     ];
 
   return rv;
@@ -293,7 +320,6 @@ function StoryEditPalette(session) {
        }
 
        .tab-content {
-         min-height: 300px;
          text-align: center;
        }
     `);
