@@ -27,7 +27,7 @@ var CSS = `
   }
   .story-wrapper {
     width: 80%;
-    max-width: 850px;
+    max-width: 800px;
     margin: 0 auto;
   }
   .story-header {
@@ -180,7 +180,7 @@ exports.content = function(params) {
       `
       <div class="story-header">
         <h1 class="story-title">That time we went to the India</h1>
-        <div class="story-author">By Sarah Timmermans</div>
+        <div class="story-author">By Eytan Daniyalzade</div>
       </div>
       <div class="story-content">
       ${
@@ -192,7 +192,7 @@ exports.content = function(params) {
       }
       </div>
       <div class="story-footer">
-        Were you there? Help Sarah tell this story by dropping related pictures on this page.
+        Were you there? Help Eytan tell this story by dropping related pictures on this page.
         <img class="story-footer-connect" src="/assets/connect.svg" width="80"/>
       </div>
       `;
