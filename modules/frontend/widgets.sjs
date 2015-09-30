@@ -356,7 +356,25 @@ function StoryEditPalette(session, Selection) {
        }
     `);
 
-  return TabWidget .. PaletteCSS ::
+  var EditingLogic = @Mechanism ::
+    function(node) {
+      @backfill.cmd.stream(['click-photo', 'set-text']) .. @each {
+        |[cmd,param]|
+        
+        if (cmd === 'click-photo') {
+          if (Selection .. @current())
+            (Selection .. @current() .. @field.Value()).set({type:'img', url:param});
+        }
+        
+        if (cmd === 'set-text') {
+          if (Selection .. @current()) {
+            (Selection .. @current() .. @field.Value()).set({type:'txt', content: ''});
+          }
+        }
+      }
+    };
+
+  return TabWidget .. PaletteCSS .. EditingLogic ::
     [
       {
         title:   'Photos',

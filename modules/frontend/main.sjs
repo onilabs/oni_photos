@@ -91,29 +91,10 @@ function do_edit_story(session, story_id) {
   ) {
     ||
     waitfor {
-      editing_logic();
-    }
-    or {
       synchronize_from_upstream();
     }
-  }
-
-  function editing_logic() {
-    @backfill.cmd.stream(['done', 'click-photo', 'set-text']) .. @each {
-      |[cmd,param]|
-            
-      if (cmd === 'click-photo') {
-        if (Selection .. @current())
-          (Selection .. @current() .. @field.Value()).set({type:'img', url:param});
-      }
-
-      if (cmd === 'set-text') {
-        if (Selection .. @current()) {
-          (Selection .. @current() .. @field.Value()).set({type:'txt', content: ''});
-        }
-      }
-      
-      if (cmd === 'done') return;
+    or {
+      @backfill.cmd.stream(['done']) .. @wait();
     }
   }
 
