@@ -9,11 +9,13 @@ $().ready(function() {
 var clone;
 
 function clickRef(event){
+  $(document).off('click');
+  $(window).off('scroll');
   event.preventDefault();
   $(clone).remove();
   clone = undefined;
   $('.story-fog').addClass('hidden');
-  $(document.body).css({overflow: ''});
+
 }
 
 function lightboxBehavior(selector) {
@@ -52,8 +54,8 @@ function lightboxBehavior(selector) {
 
       setTimeout(function(){
         $('.story-fog').removeClass('hidden');
-        $(document.body).css({overflow: 'hidden'});
-        $(document).one('click', clickRef);
+        $(document).on('click', clickRef);
+        $(window).on('scroll', clickRef);
       }, 0);
       setTimeout(function() {
         clone.css({
