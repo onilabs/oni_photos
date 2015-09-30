@@ -181,7 +181,7 @@ exports.HorizontalPhotoStream = HorizontalPhotoStream;
    @summary XXX write me
    @param {sjs:observable::Observable} [story_content]
 */
-function StoryEditWidget(StoryContent) {
+function StoryEditWidget(StoryContent, Selection) {
   var width = document.body.clientWidth-20;
   var image_size = Math.min(288, Math.floor(width/2-8));
   
@@ -247,7 +247,30 @@ function StoryEditWidget(StoryContent) {
           } /* @each */
         });
 
-    return rv;
+    return rv .. @Mechanism(function(node) {
+      @backfill.cmd.stream(['select-block']) .. @each {
+        |[cmd, cell]|
+        var selected_cell = Selection .. @current();
+        if (selected_cell) {
+          selected_cell.removeAttribute('selected');
+          
+          // remove the focus if we're moving from contenteditable to not-contenteditable:
+          var old_editable = selected_cell.querySelector('[contenteditable]');
+          var new_editable = cell.querySelector('[contenteditable]');
+
+          if (old_editable && !new_editable) {
+            // see http://stackoverflow.com/questions/4878713/how-can-i-blur-a-div-where-contenteditable-true
+            old_editable.blur();
+            window.getSelection().removeAllRanges();
+            hold(0);
+          }
+
+        }
+        Selection.set(cell);
+        cell.setAttribute('selected', true);
+          
+      }
+    });
   }
   
   function row_template() {
@@ -319,7 +342,7 @@ function TabWidget(tabs) {
      'set-full-width' -> set current row to 'full-width' layout
      'set-split-row' -> set current row to split layout
 */
-function StoryEditPalette(session) {
+function StoryEditPalette(session, Selection) {
 
   var PaletteCSS = @CSS(
     `

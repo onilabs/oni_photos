@@ -75,6 +75,8 @@ function do_edit_story(session, story_id) {
     throw new Error("write me");
   };
   
+  var Selection = @ObservableVar();
+
   document.body .. @appendContent(
     @field.Field({Value:Story}) ..
       @field.FieldMap() ::  
@@ -82,9 +84,9 @@ function do_edit_story(session, story_id) {
           title:        'STORY',
           title_action: @Span() .. @backfill.cmd.Click('done') :: 'Done',
           
-          body: @widgets.StoryEditWidget(Story),
+          body: @widgets.StoryEditWidget(Story, Selection),
           
-          footer: @widgets.StoryEditPalette(session)      
+          footer: @widgets.StoryEditPalette(session, Selection)      
         })
   ) {
     ||
@@ -97,38 +99,17 @@ function do_edit_story(session, story_id) {
   }
 
   function editing_logic() {
-    var selected_block;
-    @backfill.cmd.stream(['done', 'select-block', 'click-photo', 'set-text']) .. @each {
+    @backfill.cmd.stream(['done', 'click-photo', 'set-text']) .. @each {
       |[cmd,param]|
-      
-      if (cmd === 'select-block') {
-        if (selected_block) {
-          selected_block.removeAttribute('selected');
-          
-          // remove the focus if we're moving from contenteditable to not-contenteditable:
-          var old_editable = selected_block.querySelector('[contenteditable]');
-          var new_editable = param.querySelector('[contenteditable]');
-
-          if (old_editable && !new_editable) {
-            // see http://stackoverflow.com/questions/4878713/how-can-i-blur-a-div-where-contenteditable-true
-            old_editable.blur();
-            window.getSelection().removeAllRanges();
-            hold(0);
-          }
-
-        }
-        selected_block = param;
-        selected_block.setAttribute('selected', true);
-      }
-      
+            
       if (cmd === 'click-photo') {
-        if (selected_block)
-          (selected_block .. @field.Value()).set({type:'img', url:param});
+        if (Selection .. @current())
+          (Selection .. @current() .. @field.Value()).set({type:'img', url:param});
       }
 
       if (cmd === 'set-text') {
-        if (selected_block) {
-          (selected_block .. @field.Value()).set({type:'txt', content: ''});
+        if (Selection .. @current()) {
+          (Selection .. @current() .. @field.Value()).set({type:'txt', content: ''});
         }
       }
       
