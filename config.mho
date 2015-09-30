@@ -46,6 +46,8 @@ exports.serve = function(args) {
       @route.CodeDirectory(/^(?=hubs\.sjs[^\/]*$)/, require.url("./modules/")), 
       // common library:
       @route.CodeDirectory('lib/', require.url("./modules/lib/")),
+      // static assets
+      @route.StaticDirectory('assets/', require.url("./modules/frontend/assets/")),
       // frontend modules:
       @route.ExecutableDirectory(/^\/?/, require.url("./modules/frontend/"))
     ];
