@@ -27,7 +27,7 @@ var CSS = `
   }
   .story-wrapper {
     width: 80%;
-    max-width: 800px;
+    max-width: 750px;
     margin: 0 auto;
   }
   .story-header {
@@ -40,10 +40,22 @@ var CSS = `
     font-weight: 700;
   }
   .story-author {
-    margin-top: -20px;
+    margin-top: -10px;
     font-size: 18px;
     font-weight: 300;
     color: #7E53A3;
+  }
+  .story-author-face {
+    width: 60px;
+    height: 60px;
+    overflow: hidden;
+    border-radius: 100%;
+    display: inline-block;
+    vertical-align: middle;
+    margin: -4px 10px 0 0;
+  }
+  .story-author-face img {
+    width: 100%;
   }
   .story-footer {
     font-size: 20px;
@@ -90,10 +102,13 @@ var CSS = `
   .story-image {
     width: 100%;
     height: 0;
-    padding-bottom: 100%;
+    padding-bottom: 75%;
     background-repeat: no-repeat;
     background-position: center center;
     background-size: cover;
+  }
+  .story-block.is-fullwidth .story-image {
+    // padding-bottom: 50%;
   }
   .story-txt {
     font-size: 20px;
@@ -170,6 +185,8 @@ exports.content = function(params) {
       type: 'txt',
       content: 'Toddling up the mountain he plants his feet in the mountain soil to rise like a mountain in the land of mountains. \n The whole mountain lives inside the mountain child And in the lap of the mountain lives the scurrying mountain child.'
     }]);
+    content[4].pop();
+    content[6].pop();
     return @Document({
       title: 'Photo Story',
       template: 'plain',
@@ -180,7 +197,10 @@ exports.content = function(params) {
       `
       <div class="story-header">
         <h1 class="story-title">That time we went to the India</h1>
-        <div class="story-author">By Eytan Daniyalzade</div>
+        <div class="story-author">
+          <span class="story-author-face"><img src="https://scontent-lga3-1.cdninstagram.com/hphotos-xfa1/t51.2885-15/e35/11849996_1497391333904305_1121696930_n.jpg"/></span>
+          <span class="story-author-name">Photo story by Eytan Daniyalzade</span>
+        </div>
       </div>
       <div class="story-content">
       ${
