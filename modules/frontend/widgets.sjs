@@ -334,62 +334,99 @@ function TabWidget(tabs) {
    @function storyEditPalette
    @summary Tools palette for editing stories
    @param {Object} [session]
-   @desc
-     Emits the commands:
-
-     'set-text' -> set current selection to 'text'
-     'click-photo' -> set current selection to photo url given as parameter
-     'set-full-width' -> set current row to 'full-width' layout
-     'set-split-row' -> set current row to split layout
+   @param {sjs:observable::Observable} [Selection]
 */
 function StoryEditPalette(session, Selection) {
 
-  var PaletteCSS = @CSS(
-    `
-       .tab-header {
-         padding:20px;
-         text-align: center;
-       }
+  var ActiveTool = @ObservableVar(0);
 
-       .tab-content {
-         text-align: center;
-       }
-    `);
+  var tools = [
+    { 
+      type: 'img',
+      title: 'Photos',
+      content: HorizontalPhotoStream(session) ..
+                 @Mechanism(function() {
+                   @backfill.cmd.stream(['click-photo']) .. @each {
+                     |[cmd,url]|
+                     var selection = Selection .. @current();
+                     if (selection)
+                       (selection .. @field.Value()).set({type:'img', url:url});
+                   }
+                 })
+    },
+    { 
+      type: 'txt',
+      title: 'Text',
+      content: @Div() .. 
+                 @Mechanism(function() {
+                   var selection = Selection .. @current();
+                   if (!selection) return;
+                   var field = selection .. @field.Value();
+                   if ((field .. @current()).type !== 'txt') {
+                     field.set({type:'txt', content:[]});
+                   }
+                   var editable = selection.querySelector('[contenteditable]');
+                   if (editable) 
+                     editable.focus();
+                 })
+    },
+    { 
+      title: 'Layout',
+      content: [
+        Action('set-full-width') :: "Full Width",
+        @Br(),
+        Action('set-split-row') :: "Split"
+      ]
+    }
+  ];
 
-  var EditingLogic = @Mechanism ::
+  var ToolbarMechanism = @Mechanism ::
     function(node) {
-      @backfill.cmd.stream(['click-photo', 'set-text']) .. @each {
-        |[cmd,param]|
-        
-        if (cmd === 'click-photo') {
-          if (Selection .. @current())
-            (Selection .. @current() .. @field.Value()).set({type:'img', url:param});
+      waitfor {
+        // open tool corresponding to selected cell's type:
+        Selection .. @each {
+          |selection|
+          if (!selection) continue;
+          var sel_type = (selection .. @field.Value() .. @current).type;
+          var tool_idx = (tools .. @indexed .. @find([,{type}] -> type && (type === sel_type), []))[0];
+          if (tool_idx !== undefined)
+            ActiveTool.set(tool_idx);
         }
-        
-        if (cmd === 'set-text') {
-          if (Selection .. @current()) {
-            (Selection .. @current() .. @field.Value()).set({type:'txt', content: ''});
-          }
+      }
+      or {
+        // activate tool if the user clicks on it:
+        @backfill.cmd.stream(['tool']) .. @each {
+          |[cmd, tool_idx]|
+          ActiveTool.set(tool_idx);
         }
       }
     };
 
-  return TabWidget .. PaletteCSS .. EditingLogic ::
+  var ToolbarCSS = @CSS(
+    `
+    > div { display: inline-block;
+            width: ${100/tools.length}%;
+            cursor: pointer;
+          }
+    > div[active] { color:white; }
+    `);
+
+  var rv = 
+    @Div ::
     [
-      {
-        title:   'Photos',
-        content: HorizontalPhotoStream(session)
-      },
-      { title: 'Text',
-        content: Action('set-text') :: "Text"
-      },
-      { title: 'Layout',
-        content: [ Action('set-full-width') :: "Full Width",
-                  @Br(),
-                  Action('set-split-row') :: "Split"
-                 ]
-      }
+      @Div() ::
+        ActiveTool .. @transform(index -> tools[index].content),
+      
+      @Div() .. ToolbarCSS .. ToolbarMechanism ::
+        tools .. 
+          @indexed ..
+          @map([i, {title}] -> @Div(title) ..
+                                 @backfill.cmd.Click('tool', i) ..
+                                 @Attrib('active', ActiveTool .. @transform(idx -> idx === i))
+              )
     ];
+
+  return rv;      
 }
 exports.StoryEditPalette = StoryEditPalette;
 
