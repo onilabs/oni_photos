@@ -2,13 +2,19 @@
    @summary Main frontend application logic
 */
 
+require('/hubs');
+
 @ = require([
   'mho:std',
   'mho:app',
   {id:'./auth', name:'auth'},
   {id:'./widgets', name:'widgets'},
   {id:'./backfill', name:'backfill'},
-  {id:'mho:surface/field', name:'field'}
+  {id:'mho:surface/field', name:'field'},
+  {id:'mho:surface/api-connection',
+   include: ['withResumingAPI']
+  }
+
 ]);
 
 //----------------------------------------------------------------------
@@ -119,12 +125,18 @@ function do_edit_story(session, story_id) {
    @param {Object} [api] Connected [./main.api::] object
    @summary Main frontend application procedure
 */
-exports.main = function(api) {
-
-  var session = @auth.login(api);
-
+function main(startup_parameters) {
+  console.log(startup_parameters .. @inspect);
   while (1) {
-    var story_id = session .. do_index();
-    session .. do_edit_story(story_id);
+    @withResumingAPI(require.url('./main.api')) {
+      |api|
+      var session = @auth.login(api);
+      
+      while (1) {
+        var story_id = session .. do_index();
+        session .. do_edit_story(story_id);
+      }
+    }
   }
 };
+exports.main = main;

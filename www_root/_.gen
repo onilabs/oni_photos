@@ -1,0 +1,93 @@
+/**
+   @summary Wildcard generator for serving the root of our site
+*/
+
+@ = require([
+  'mho:std',
+  'mho:surface/html',
+  {id:'mho:server/response', name:'response'},
+  {id:'lib:static_html', name:'static'}
+]);
+
+// xxx helper that should go into surface
+function stringifyHTML(fragment) { 
+  return (fragment .. @collapseHtmlFragment()).getHtml();
+}
+
+
+//----------------------------------------------------------------------
+
+exports.filetype = 'html';
+
+exports.content = function(params) {
+
+  // params.path should either be '/index.html' or '/story/STORY_ID', otherwise
+  // we redirect to '/':
+  
+  if (params.path === '/index.html') {
+    return IndexPage();
+  }
+
+  var matches = /^\/story\/([^\/]+)$/.exec(params.path);
+
+  if (matches) {
+    try {
+      return StoryPage(matches[1]);
+    }
+    catch (e) {
+      console.log("Story couldn't be generated: #{e}");
+      // fall through to redirect
+    }
+  }
+  
+
+  // if we're here, we failed to handle the request -> fail, or redirect to '/':
+  if (params.path === '/favicon.ico')
+    throw new @response.HttpError(400);
+  this .. @response.writeRedirectResponse('/');
+};
+
+
+//----------------------------------------------------------------------
+
+var Document = (content, startup_parameters) -> stringifyHTML ::
+  `<!DOCTYPE html>
+<html>
+  <head>
+    <title>Photo Stories</title>
+
+    <meta http-equiv='Content-Type' content='text/html; charset=UTF-8'>
+    <meta name="viewport" content="user-scalable=no, width=device-width">
+
+    <link href='/frontend/assets/global.css' rel='stylesheet'>
+
+    <script src='/__mho/surface/bootstrap/jquery-1.10.2.min.js'></script>
+
+    <script src='/__sjs/stratified.js' async></script>
+
+    <script type='text/sjs'>
+      require.hubs.push(['mho:', '/__mho/']);
+      require('/hubs');
+    </script>
+
+    <script type='text/sjs' module='mho:app'>
+      var html = require('mho:surface/html');
+      module.exports = require('sjs:object').merge(html, {
+        body: document.body,
+        mainContent: document.body
+      });
+    </script>
+  
+    <script type='text/sjs'>
+      require('/hubs');
+      require('frontend:published_story_interactions'); // XXX
+      require('frontend:main').main(${startup_parameters .. @RawHTML});
+    </script>
+  </head>
+  <body>${content}</body>
+</html>`; 
+
+var IndexPage = -> Document("['index']") :: @static.index();
+
+var StoryPage = story_id -> Document("['story','#{story_id}']") :: @static.publishedStory(story_id);
+

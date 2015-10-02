@@ -1,5 +1,6 @@
 /**
    @summary SJS code for public stories
+   @desc This is currently always loaded in via www_root/_.gen
 */
 
 $().ready(function() {

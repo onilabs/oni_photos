@@ -13,6 +13,7 @@
 
 require.hubs.push(['lib:', require.url('./lib/')]);
 require.hubs.push(['backend:', require.url('./backend/')]);
+require.hubs.push(['frontend:', require.url('./frontend/')]);
 
 if (@sys.hostenv === 'nodejs') {
   // XXX this is needed for tools that make use of our services (leveldb
