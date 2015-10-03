@@ -4,7 +4,9 @@
   {id: 'backend:db/stories', name: 'stories'}
 ]);
 
-exports.index = -> `<h1>Photo Stories</h1>`;
+exports.index = -> `
+  <h1>Create photo based stories with friends & family</h1>
+  `;
 
 
 exports.publishedStory = function(story_id) {

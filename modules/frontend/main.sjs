@@ -20,7 +20,7 @@ require('/hubs');
 //----------------------------------------------------------------------
 
 function do_index(session) {
-  document.body .. @appendContent(
+  @mainContent .. @replaceContent(
     @widgets.Page({
       title:        'PHOTO STORIES',
       title_action: @Span() .. @backfill.cmd.Click('add_story') :: '+',
@@ -130,6 +130,7 @@ function main(startup_parameters) {
   while (1) {
     @withResumingAPI(require.url('./main.api')) {
       |api|
+      console.log('got the api');
       var session = @auth.login(api);
       
       while (1) {

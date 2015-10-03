@@ -74,7 +74,8 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
       var html = require('mho:surface/html');
       module.exports = require('sjs:object').merge(html, {
         body: document.body,
-        mainContent: document.body
+        mainContent: document.querySelector('#mainContent'),
+        sessionMenu: document.querySelector('#sessionMenu')
       });
     </script>
   
@@ -84,7 +85,13 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
       require('frontend:main').main(${startup_parameters .. @RawHTML});
     </script>
   </head>
-  <body>${content}</body>
+  <body>
+    <div class='menubar'>
+      <div>Photo Stories<br><span style='color:grey; font-size:smaller'>Tell Stories Together</span></div>
+      <div style='float:right;' id='sessionMenu'></div>
+    </div>
+    <div id='mainContent'>${content}</div>
+  </body>
 </html>`; 
 
 var IndexPage = -> Document("['index']") :: @static.index();
