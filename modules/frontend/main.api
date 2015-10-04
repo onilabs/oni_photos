@@ -116,6 +116,12 @@ exports.Session = function(origin, credentials) {
 
   return {
     /**
+       @variable user
+       @summary Username of authenticated user
+    */
+    user: user,
+
+    /**
        @function Session.authorizeGoogle
        @param {Function} [redirect] client-side redirection function
        @summary Perform Google OAuth authorization to photos API (e.g. in case permissions were revoked - see [::Session::Authorized])

@@ -19,7 +19,8 @@ require('/hubs');
 
 //----------------------------------------------------------------------
 
-function do_index(session) {
+function do_index() {
+  var session = @env('Session') .. @filter(x->!!x) .. @first();
   @mainContent .. @replaceContent(
     @widgets.Page({
       title:        'PHOTO STORIES',
@@ -57,8 +58,8 @@ function do_index(session) {
 //----------------------------------------------------------------------
 
 
-function do_edit_story(session, story_id) {
-
+function do_edit_story(story_id) {
+  var session = @env('Session') .. @filter(x->!!x) .. @first();
   if (!story_id) {
     story_id = session.createStory();
   }
@@ -127,15 +128,23 @@ function do_edit_story(session, story_id) {
 */
 function main(startup_parameters) {
   console.log(startup_parameters .. @inspect);
+  @env.set('api', null);
+  @env.set('Session', @ObservableVar());
   while (1) {
     @withResumingAPI(require.url('./main.api')) {
       |api|
-      console.log('got the api');
-      var session = @auth.login(api);
+      @env.set('api',api);
       
-      while (1) {
-        var story_id = session .. do_index();
-        session .. do_edit_story(story_id);
+      waitfor {
+        // this will fill in @env('Session') when we have an authenticated session:
+        @auth.doSessionMenu();
+      }
+      or {
+        // main ui logic
+        while (1) {
+          var story_id = do_index();
+          do_edit_story(story_id);
+        }
       }
     }
   }

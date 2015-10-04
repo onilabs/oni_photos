@@ -17,6 +17,14 @@ exports.content = function(param) {
   html {
     height: 100%;
   }
+  .action {
+    cursor: pointer;
+    color: #29c5f4;
+  }
+
+  .action[disabled] {
+    color: #6b6b6b;
+  }
   body {
     height: 100%;
     display: flex;

@@ -87,8 +87,10 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
   </head>
   <body>
     <div class='menubar'>
-      <div>Photo Stories<br><span style='color:grey; font-size:smaller'>Tell Stories Together</span></div>
-      <div style='float:right;' id='sessionMenu'></div>
+      <div>Photo Stories<br>
+        <span style='color:grey; font-size:smaller'>Tell Stories Together</span>
+        <div style='float:right;' id='sessionMenu'></div>
+      </div>
     </div>
     <div id='mainContent'>${content}</div>
   </body>

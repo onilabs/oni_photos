@@ -12,17 +12,45 @@
 var CREDENTIALS_KEY = 'oni_photos_creds';
 
 //----------------------------------------------------------------------
+
 /**
-   @function login
-   @summary Login the user, potentially displaying a login/oauth dialog
-   @param {Object} [api] Connected [main.api::] object
-   @return {Object} Authenticated [main.api::Session] object
+   @variable Session
+   @summary Authenticated Session object
 */
-function login(api) {
+var Session = @ObservableVar();
+
+//----------------------------------------------------------------------
+/**
+   @function doSessionMenu
+   @summary xxx write me
+*/
+function doSessionMenu() {
+  try {
+    while (1) {
+      doUserLogin();
+      doUserLogout();
+    }
+  }
+  catch (e) {
+    console.log("Session Loop: #{e}");
+    // just return to main caller; this will effectively 'restart' our app
+    return;
+  }
+  finally {
+    @env('Session').set(undefined);
+  }
+}
+exports.doSessionMenu = doSessionMenu;
+
+
+function doUserLogin() {
+  // try to log in with stored credentials:
   if (localStorage[CREDENTIALS_KEY]) {
     try {
       // try stored credentials:
-      return api.Session(window.location.origin, localStorage[CREDENTIALS_KEY]);
+      @env('Session').set(@env('api').Session(window.location.origin, localStorage[CREDENTIALS_KEY]));
+      // we succeeded to obtain a session with stored credentials:
+      return;
     }
     catch (e) {
       console.log(e);
@@ -31,14 +59,9 @@ function login(api) {
     }
   }
 
-  // if we're here, the user needs to log in
-  document.body .. @appendContent(
-    @widgets.Page({
-      title: 'PHOTO STORIES',
-      body: [
-        @widgets.Action('google_login') :: "Log in with Google"
-      ]
-    })
+  // if we're here, the user needs to log explicitly
+  @sessionMenu .. @replaceContent(
+    @widgets.Action('google_login') :: "Log in with Google"
   ) {
     ||
     @backfill.cmd.stream(['google_login']) .. @each {
@@ -47,15 +70,16 @@ function login(api) {
       if (command === 'google_login') {
         @backfill.withPopupWindow {
           |redirect|
-          credentials = api.loginGoogle(window.location.origin, redirect);
+          credentials = @env('api').loginGoogle(window.location.origin, redirect);
         }
         if (credentials) {
           try {
-            var session = api.Session(window.location.origin, credentials);
+            var session = @env('api').Session(window.location.origin, credentials);
             // success; we've got a session
             // remember credentials for next time
             localStorage[CREDENTIALS_KEY] = credentials;
-            return session;
+            @env('Session').set(session);
+            return;
           }
           catch (e) {
             console.log("Failure obtaining session for credentials #{e}");
@@ -66,7 +90,21 @@ function login(api) {
     }
   }
 }
-exports.login = login;
+
+function doUserLogout() {
+ @sessionMenu .. @replaceContent(
+    @widgets.Action('logout') :: "Log out #{(@env('Session') .. @current()).user}"
+  ) {
+    ||
+    @backfill.cmd.stream(['logout']) .. @each {
+      |[command, param]|
+      if (command === 'logout') {
+        delete localStorage[CREDENTIALS_KEY];
+        throw new Error('logout'); // this will effectively restart the app
+      }
+    }
+  }
+}
 
 
 //----------------------------------------------------------------------
