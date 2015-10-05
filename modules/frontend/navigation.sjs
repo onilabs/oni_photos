@@ -42,7 +42,7 @@ function dispatchStateChanges() {
     @each {
       |ev|
       console.log('nav event');
-      navigate(location.href);
+      navigate(location.href, true);
     }
 }
 
@@ -107,7 +107,8 @@ function route(routes) {
   }
   or {
     // goto initial page:
-    navigate(location.href);
+    console.log('navigating to initial page');
+    navigate(location.href, true);
     dispatchStateChanges();
   }
 
