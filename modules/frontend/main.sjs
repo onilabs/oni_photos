@@ -65,10 +65,13 @@ function do_index_with_session(session) {
       ]
   ) {
     ||
-    @backfill.cmd.stream(['add_story', 'edit_story']) .. @each {
+    @backfill.cmd.stream(['add_story']) .. @each {
       |[cmd, param]|
-      if (cmd === 'add_story')
-        return undefined;
+      if (cmd === 'add_story') {
+        var id = session.createStory();
+        @navigation.navigate("/story/#{id}/edit");
+        return;
+      }
     }
   }  
 }
@@ -90,9 +93,6 @@ function do_show_story(url,story_id) {
 
 function do_edit_story(story_id) {
   var session = @env('Session') .. @filter(x->!!x) .. @first();
-  if (!story_id) {
-    story_id = session.createStory();
-  }
 
   // xxx hack
   var Upstream = session.StoryData(story_id);
