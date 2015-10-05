@@ -39,35 +39,36 @@ function do_index_no_session() {
 
 function do_index_with_session(session) {
   @mainContent .. @replaceContent(
-    @widgets.Page({
-      title:        'PHOTO STORIES',
-      title_action: @Span() .. @backfill.cmd.Click('add_story') :: '+',
-      body:
-      session.Stories() .. @transform(function(stories) {
-        var arr = stories ..
-          @map(id -> @Li([id .. @widgets.Action('edit_story', id),
-                          `&nbsp;<a href="${window.location.origin}/story/${id}">public url</a>`
-                         ]));
+    @Div() ::
+      [
+        @widgets.Action('add_story') :: 'Create new story',
 
-        if (!arr.length) {
-          return `<h1>You do not have any photo stories yet.</h1>
-                  <hr>
-                  <p>Photo stories allows you to create simple and beautiful photo & text based
-                   albums using your existing photos in the cloud.</p>
-                 `
-        }
-        else
-          return @Ul(arr);
-      })
-    })
+        session.Stories() .. @transform(function(stories) {
+          var arr = stories ..
+            @map(id -> @Li(` ${id} 
+                             <a href="/story/${id}/edit">edit</a>
+                             &nbsp;
+                             <a href="/story/${id}">public url</a>
+                           `
+                           ));
+          
+          if (!arr.length) {
+            return `<h1>You do not have any photo stories yet.</h1>
+                    <hr>
+                    <p>Photo stories allows you to create simple and beautiful photo & text based
+                    albums using your existing photos in the cloud.</p>
+                   `
+          }
+          else
+            return @Ul(arr);
+        })
+      ]
   ) {
     ||
     @backfill.cmd.stream(['add_story', 'edit_story']) .. @each {
       |[cmd, param]|
       if (cmd === 'add_story')
         return undefined;
-      if (cmd === 'edit_story')
-        return param; // param = story id
     }
   }  
 }
