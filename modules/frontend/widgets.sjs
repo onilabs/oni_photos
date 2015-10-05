@@ -109,12 +109,10 @@ function StoryEditWidget(StoryContent, Selection) {
       width: #{image_size}px;
       height: #{image_size}px;
       margin: 2px;
-      background-color: #2d3c42;
       border: 2px solid #2d5665;
       display: inline-block;
     }
     .block[selected] {
-      background-color: #2b5667;
       border: 2px solid #29c4fb;
     }
     .block > img {
