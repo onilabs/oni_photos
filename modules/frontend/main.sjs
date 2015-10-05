@@ -91,7 +91,8 @@ function do_show_story(url,story_id) {
 
 //----------------------------------------------------------------------
 
-function do_edit_story(story_id) {
+function do_edit_story(url, story_id) {
+console.log(arguments .. @inspect);
   var session = @env('Session') .. @filter(x->!!x) .. @first();
 
   // xxx hack
@@ -99,7 +100,7 @@ function do_edit_story(story_id) {
   var Story = @ObservableVar(Upstream .. @current);
   var old_set = Story.set;
   var old_modify = Story.modify;
-  
+
   Story.set = function(val) {
     console.log('setting story');
     if (!@eq(val, Story .. @current)) {
@@ -114,17 +115,37 @@ function do_edit_story(story_id) {
   
   var Selection = @ObservableVar();
 
+  var EditorCSS = @CSS("
+    {
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      flex-wrap: nowrap;
+    }
+
+    .body {
+      flex-grow: 1;
+      overflow: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 10px;
+    }
+
+    .toolbox {
+      flex-shrink: 0;
+      background-color: #1e1e1e;
+    }
+  ");
+  
   @mainContent .. @replaceContent(
     @field.Field({Value:Story}) ..
-      @field.FieldMap() ::  
-        @widgets.Page({
-          title:        'STORY',
-          title_action: @Span() .. @backfill.cmd.Click('done') :: 'Done',
-          
-          body: @widgets.StoryEditWidget(Story, Selection),
-          
-          footer: @widgets.StoryEditPalette(session, Selection)      
-        })
+      @field.FieldMap() ::
+        @Div() .. EditorCSS ::
+          [ 
+            @Div() .. @Class('body') ::
+              @widgets.StoryEditWidget(Story, Selection),
+            @Div() .. @Class('toolbox') ::
+              @widgets.StoryEditPalette(session, Selection)
+          ]
   ) {
     ||
     waitfor {
