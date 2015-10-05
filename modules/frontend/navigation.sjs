@@ -6,9 +6,16 @@ var NavigationEmitter = @Emitter();
 
 //----------------------------------------------------------------------
 
-function navigate(url) {
-  history.pushState(null, '', url);
+function navigate(url, omit_state_push) {
+  var url = url .. @url.normalize(location.href);
+  var origin = location.origin;
+  if (!url .. @startsWith(origin)) return false;
+  url = url.substring(origin.length);
+
+  if (!omit_state_push)
+    history.pushState(null, '', url);
   NavigationEmitter.emit(url);
+  return true;
 }
 exports.navigate = navigate;
 
@@ -24,29 +31,23 @@ function captureLinks() {
             }) .. 
     @each {
       |ev|
-      var href = ev.target.href .. @url.normalize(location.href);
-      var origin = location.origin;
-      if (!href .. @startsWith(origin)) continue;
-
-      ev.preventDefault();
-      href = href.substring(origin.length);
-      NavigationEmitter.emit(href);
+      if (navigate(ev.target.href))
+          ev.preventDefault();
     }
 }
 
 function dispatchStateChanges() {
-  // XXX
-  hold();
+  window ..
+    @events("popstate") ..
+    @each {
+      |ev|
+      console.log('nav event');
+      navigate(location.href);
+    }
 }
 
 function route(routes) {
   waitfor {
-    captureLinks();
-  }
-  or {
-    dispatchStateChanges();
-  }
-  or {
     var activeRoute; 
       
     try {
@@ -62,23 +63,32 @@ function route(routes) {
         routes .. @each {
           |[matcher, route_f]|
 
-          if (typeof matcher === 'string' &&
-              matcher === url) {
-            activeRoute = {
-              url: url,
-              stratum: spawn route_f(url)
+          if (typeof matcher === 'string') {
+            if (matcher === url) {
+              activeRoute = {
+                url: url,
+                stratum: spawn (function() {
+                  route_f(url);
+                  hold();
+                })()
+              }
+              break;
             }
-            break;
           }
-          var matches;
-          if ((matches = matcher.exec(url))) {
-            matches.shift();
-            matches.unshift(url);
-            activeRoute = {
-              url: url,
-              stratum: spawn route_f.apply(null, matches)
+          else {
+            var matches;
+            if ((matches = matcher.exec(url))) {
+              matches.shift();
+              matches.unshift(url);
+              activeRoute = {
+                url: url,
+                stratum: spawn (function() {
+                  route_f.apply(null, matches);
+                  hold();
+                })()
+              }
+              break;
             }
-            break;
           }
         }
         if (!activeRoute)
@@ -91,6 +101,14 @@ function route(routes) {
         activeRoute = undefined;
       }
     }
+  }
+  or {
+    captureLinks();
+  }
+  or {
+    // goto initial page:
+    navigate(location.href);
+    dispatchStateChanges();
   }
 
 }

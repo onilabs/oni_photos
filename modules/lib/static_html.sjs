@@ -1,7 +1,6 @@
 @ = require([
   'mho:std',
-  'mho:surface/html',
-  {id: 'backend:db/stories', name: 'stories'}
+  'mho:surface/html'
 ]);
 
 exports.index = -> `
@@ -9,7 +8,7 @@ exports.index = -> `
   `;
 
 
-exports.publishedStory = function(story_id) {
+exports.publishedStory = function(story_content) {
     function Block(descriptor, rowSize) {
       var rv = @Div() .. @Class('story-block' + (rowSize === 1 ? ' is-fullwidth' : ''));
       if (descriptor.type === 'img') {
@@ -25,14 +24,12 @@ exports.publishedStory = function(story_id) {
       return rv;
     }
 
-  var content = @stories.getPublicStory(story_id).content;
-  console.log(content);
-    content.splice(2, 0, [{
+    story_content.splice(2, 0, [{
       type: 'txt',
       content: 'Toddling up the mountain he plants his feet in the mountain soil to rise like a mountain in the land of mountains. \n The whole mountain lives inside the mountain child And in the lap of the mountain lives the scurrying mountain child.'
     }]);
-    content[4].pop();
-    content[6].pop();
+    story_content[4].pop();
+    story_content[6].pop();
     return @Div() .. @Class('story-wrapper') ::
       `
       <div class="story-header">
@@ -44,7 +41,7 @@ exports.publishedStory = function(story_id) {
       </div>
       <div class="story-content">
       ${
-        content .. @map(
+        story_content .. @map(
           row -> row .. @map(function(block) {
             return Block(block, row.length)
           })

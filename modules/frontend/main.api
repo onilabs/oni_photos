@@ -37,6 +37,13 @@ var google_scopes = [
   'https://picasaweb.google.com/data/'
 ];
 
+/**
+   @function getPublicStory
+   @summary XXX write me
+*/
+exports.getPublicStory = function(story_id) {
+  return @stories.getPublicStory(story_id);
+};
 
 /**
    @function loginGoogle

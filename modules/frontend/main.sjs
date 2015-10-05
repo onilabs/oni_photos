@@ -13,7 +13,8 @@ require('/hubs');
   {id:'mho:surface/field', name:'field'},
   {id:'mho:surface/api-connection',
    include: ['withResumingAPI']
-  }
+  },
+  {id:'./navigation', name: 'navigation'}
 
 ]);
 
@@ -57,6 +58,18 @@ function do_index() {
 
 //----------------------------------------------------------------------
 
+function do_show_story(url,story_id) {
+  var story_content = @env('api').getPublicStory(story_id).content;
+  @mainContent .. @replaceContent(
+    require('lib:static_html').publishedStory(story_content)
+  ) {
+    ||
+    console.log('content replaced');
+    hold();
+  }
+}
+
+//----------------------------------------------------------------------
 
 function do_edit_story(story_id) {
   var session = @env('Session') .. @filter(x->!!x) .. @first();
@@ -84,7 +97,7 @@ function do_edit_story(story_id) {
   
   var Selection = @ObservableVar();
 
-  document.body .. @appendContent(
+  @mainContent .. @replaceContent(
     @field.Field({Value:Story}) ..
       @field.FieldMap() ::  
         @widgets.Page({
@@ -131,6 +144,7 @@ function main(startup_parameters) {
   @env.set('api', null);
   @env.set('Session', @ObservableVar());
   while (1) {
+    console.log('starting API loop');
     @withResumingAPI(require.url('./main.api')) {
       |api|
       @env.set('api',api);
@@ -140,11 +154,14 @@ function main(startup_parameters) {
         @auth.doSessionMenu();
       }
       or {
-        // main ui logic
-        while (1) {
-          var story_id = do_index();
-          do_edit_story(story_id);
-        }
+        // main ui dispatcher:
+        @navigation.route([
+
+          ["/", do_index],
+          [/^\/story\/([^\/]+)$/, do_show_story],
+          [/^\/story\/([^\/]+)\/edit$/, do_edit_story]
+
+        ]);
       }
     }
   }
