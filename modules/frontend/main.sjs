@@ -21,7 +21,23 @@ require('/hubs');
 //----------------------------------------------------------------------
 
 function do_index() {
-  var session = @env('Session') .. @filter(x->!!x) .. @first();
+
+  @env('Session') .. @each.track {
+    |session|
+    if (!session) 
+      do_index_no_session();
+    else
+      do_index_with_session(session);
+  }
+}
+
+function do_index_no_session() {
+  @mainContent .. @replaceContent(
+    require('lib:static_html').index()
+  );
+}
+
+function do_index_with_session(session) {
   @mainContent .. @replaceContent(
     @widgets.Page({
       title:        'PHOTO STORIES',
