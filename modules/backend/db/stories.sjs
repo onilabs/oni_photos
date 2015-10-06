@@ -96,8 +96,12 @@ exports.getPublicStory = getPublicStory;
    @param {String} [user_id]
 */
 function modifyStory(story_id, data, user_id) {
-  // XXX verify that the user can edit the story
-  STORIES() ..
-    @kv.set([story_id, 'data'], data);
+  @env('services').db .. @kv.withTransaction {
+    |T|
+    if (STORIES(T) .. @kv.get([story_id, 'owner']) !== user_id)
+      throw new Error("not authorized");
+    STORIES(T) ..
+      @kv.set([story_id, 'data'], data);
+  }
 }
 exports.modifyStory = modifyStory;
