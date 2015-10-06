@@ -76,7 +76,8 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
       module.exports = require('sjs:object').merge(html, {
         body: document.body,
         mainContent: document.querySelector('#mainContent'),
-        sessionMenu: document.querySelector('#sessionMenu')
+        sessionMenu: document.querySelector('#sessionMenu'),
+        contextMenu: document.querySelector('#contextMenu')
       });
     </script>
   
@@ -88,9 +89,12 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
   </head>
   <body>
     <div class='menubar'>
-      <div>Photo Stories<br>
+      <div><a href='/'>Photo Stories</a><br>
         <span style='color:grey; font-size:smaller'>Tell Stories Together</span>
-        <div style='float:right;' id='sessionMenu'></div>
+        <div style='float:right;'>
+          <div id='sessionMenu'></div>
+          <div id='contextMenu'></div>
+        </div>
       </div>
     </div>
     <div id='mainContent'>${content}</div>

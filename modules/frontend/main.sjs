@@ -79,13 +79,22 @@ function do_index_with_session(session) {
 //----------------------------------------------------------------------
 
 function do_show_story(url,story_id) {
-  var story_content = @env('api').getPublicStory(story_id).content;
+  // XXX we could make this 'live'
+  var story = @env('api').getPublicStory(story_id);
   @mainContent .. @replaceContent(
-    require('lib:static_html').publishedStory(story_content)
+    require('lib:static_html').publishedStory(story.content)
   ) {
     ||
-    console.log('content replaced');
-    hold();
+
+    @contextMenu .. @replaceContent(
+      @env('Session') .. 
+        @transform(session ->
+                   session ?
+                   `<a href="/story/${story_id}/edit">Edit story</a>`)
+    ) {
+      ||
+      hold();
+    }
   }
 }
 
@@ -154,6 +163,15 @@ console.log(arguments .. @inspect);
     or {
       @backfill.cmd.stream(['done']) .. @wait();
     }
+    or {
+      @contextMenu .. @replaceContent(
+        `<a href="/story/${story_id}">View published story</a>`
+      ) {
+        ||
+        hold();
+      }
+    }
+
   }
 
   function synchronize_from_upstream() {
