@@ -105,29 +105,12 @@ function StoryEditWidget(StoryContent, Selection) {
   var image_size = Math.min(288, Math.floor(width/2-8));
   
   var CSS = @CSS("
-    .block {
-      width: #{image_size}px;
-      height: #{image_size}px;
-      margin: 2px;
-      border: 2px solid #2d5665;
-      display: inline-block;
-    }
-    .block[selected] {
-      border: 2px solid #29c4fb;
-    }
-    .block > img {
-      width: 100%;
-      height: 100%;
-    }
-    .block > div {
-      overflow: auto;
-      height: 100%;
-    }
+
   ");
 
   function col_template() {
     var rv = @Div() ..
-      @Class('block') ..
+      @Class('story-block') ..
       @backfill.cmd.Click('select-block', ev -> ev.currentTarget) ..
         @Mechanism(function(node) {
           var current_type;
@@ -193,13 +176,27 @@ function StoryEditWidget(StoryContent, Selection) {
   function row_template() {
     return @Div() .. @field.FieldArray(col_template);
   }
-  
-  return @Div() ..
-    CSS ..
-    @field.Field('content') ..
-    @field.FieldArray(row_template);
 
-  
+  return @Div() .. @Class('story-wrapper') ::
+    `
+    <div class="story-header">
+      <h1 class="story-title">That time we went to the India</h1>
+      <div class="story-author">
+        <span class="story-author-face"><img src="https://scontent-lga3-1.cdninstagram.com/hphotos-xfa1/t51.2885-15/e35/11849996_1497391333904305_1121696930_n.jpg"/></span>
+        <span class="story-author-name">Photo story by Eytan Daniyalzade</span>
+      </div>
+    </div>
+    ${
+      @Div() ..
+      @Class("story-content") ..
+      @field.Field("content") ..
+      @field.FieldArray(row_template)
+    }
+    <div class="story-footer">
+      Were you there? Help Eytan tell this story by dropping related pictures on this page.
+      <img class="story-footer-connect" src="/frontend/assets/connect.svg" width="80"/>
+    </div>
+  `;
 }
 exports.StoryEditWidget = StoryEditWidget;
 
