@@ -97,6 +97,11 @@ exports.content = function(param) {
     display: block;
     float: left;
   }
+
+  .story-block[selected] {
+    border: 2px solid #29c4fb;
+  }
+
   .story-block:nth-child(even) {
     border-left-width: #{gridPadding};
     // clear: right;
