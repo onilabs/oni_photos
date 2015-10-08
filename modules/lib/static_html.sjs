@@ -15,6 +15,10 @@ var StaticBlockContentConstructors = {
            .. @Attrib('data-width', 800)
            .. @Attrib('data-height', 800),
 
+  'blank': descriptor -> 
+          @Div()
+          .. @Class('story-blank'),
+
   'txt': descriptor ->
            @Div()
            .. @Class('story-txt')
@@ -57,15 +61,6 @@ exports.index = -> `
 
 
 exports.publishedStory = function(story_content) {
-
-  /* TOM'S TEST CODE <<<< */
-  story_content.splice(2, 0, [{}, {
-    type: 'txt',
-    content: 'Toddling up the mountain he plants his feet in the mountain soil to rise like a mountain in the land of mountains. \n The whole mountain lives inside the mountain child And in the lap of the mountain lives the scurrying mountain child.'
-  }]);
-  story_content[4][1] = {};
-  story_content[6][1] = {};
-  /* >>>> TOM'S TEST CODE */
 
   function StoryRow(descriptor) {
     var rv;
