@@ -75,9 +75,9 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
       var html = require('mho:surface/html');
       module.exports = require('sjs:object').merge(html, {
         body: document.body,
-        mainContent: document.querySelector('#mainContent'),
-        sessionMenu: document.querySelector('#sessionMenu'),
-        contextMenu: document.querySelector('#contextMenu')
+        mainContent: document.querySelector('.main-content'),
+        sessionMenu: document.querySelector('.menubar-menu-session'),
+        contextMenu: document.querySelector('.menubar-menu-context')
       });
     </script>
   
@@ -89,15 +89,13 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
   </head>
   <body>
     <div class='menubar'>
-      <div><a href='/'>Photo Stories</a><br>
-        <span style='color:grey; font-size:smaller'>Tell Stories Together</span>
-        <div style='float:right;'>
-          <div id='sessionMenu'></div>
-          <div id='contextMenu'></div>
-        </div>
+      <div class='menubar-logo'></div>
+      <div class='menubar-menu'>
+        <div class='menubar-menu-session'></div>
+        <div class='menubar-menu-context'></div>
       </div>
     </div>
-    <div id='mainContent'>${content}</div>
+    <div class='main-content'>${content}</div>
   </body>
 </html>`; 
 

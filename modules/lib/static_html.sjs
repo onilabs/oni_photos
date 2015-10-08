@@ -84,7 +84,6 @@ exports.publishedStory = function(story_content) {
       </div>
       <div class="story-footer">
         Were you there? Help Eytan tell this story by dropping related pictures on this page.
-        <img class="story-footer-connect" src="/frontend/assets/connect.svg" width="80"/>
       </div>
       `;
 };
