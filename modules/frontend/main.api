@@ -1,14 +1,3 @@
-/* (c) 2013-2014 Oni Labs, http://onilabs.com
- *
- * This file is part of Conductance, http://conductance.io/
- *
- * It is subject to the license terms in the LICENSE file
- * found in the top-level directory of this distribution.
- * No part of Conductance, including this file, may be
- * copied, modified, propagated, or distributed except
- * according to the terms contained in the LICENSE file.
- */
-
 /**
    @summary Main application API
    @desc
@@ -20,7 +9,7 @@
 @ = require([
   'mho:std',
   {id: 'lib:app-info', name: 'app_info'},
-  {id: 'mho:services/google_api/REST/picasawebV2', name: 'picasa'},
+  {id: 'backend:google-photos', name: 'google_photos'},
   {id: 'backend:db/users', name: 'users'},
   {id: 'backend:db/stories', name: 'stories'},
   {id: 'mho:server/random', name: 'random'}
@@ -148,23 +137,8 @@ exports.Session = function(origin, credentials) {
        @function Session.photos
        @summary Returns a [sjs:sequence::Stream] of 288x288 recent Google photos 
     */
-    photos: function(filter) {
-      // size is hardcoded
-      return @batchN(20) ::
-        @Stream(function(r) {
-          var photos = google_oauth_session .. @picasa.recentPhotos({
-            thumbsize:'750c',
-            q:filter
-          });
-          photos .. @each {
-            |entry|
-            // return the largest thumbnail
-            var thumbnail = entry["media$group"]["media$thumbnail"] .. @find(item -> item.height == 750 || item.width == 750, null);
-            if (thumbnail)
-              r(thumbnail);
-          }
-        });
-    },
+    photos: filter -> @google_photos.query(google_oauth_session, {filter: filter}),
+
 
     /**
        @function Session.createStory
