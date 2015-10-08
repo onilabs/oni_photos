@@ -42,7 +42,7 @@ function VerticalPhotoStream(session) {
     img {
       width:  #{image_size}px;
       height: #{image_size}px;
-      margin: 2px;
+      margin: 0 1px 0 2px;
     }
   ");
   
@@ -60,28 +60,38 @@ exports.VerticalPhotoStream = VerticalPhotoStream;
    @summary XXX write me
 */
 function HorizontalPhotoStream(session) {
-  var width = document.body.clientWidth;
-  var image_size = Math.min(288, Math.floor(width/2.5-4));
+  var image_size = 120;
 
   var CSS = @CSS("
     {
       -webkit-overflow-scrolling: touch;
-      white-space:nowrap;
-      overflow-x:scroll;
+      white-space: nowrap;
+      overflow-x: scroll;
+      height: 123px;
     }
     img {
       width: #{image_size}px;
       height: #{image_size}px;
-      margin: 2px;
+      margin: 0 2px;
     }
   ");
   
   var Filter = @ObservableVar('');
 
-  return @Div() :: 
+  return @Div() ::
     [
-      'Filter:',
-      @Input(Filter),
+      @Input({type: 'search', value: Filter}) .. @Attrib('placeholder', 'Search') .. @CSS("
+      {
+        border: 0;
+        background: #383737;
+        color: #171616;
+        outline: 0;
+        min-width: 260px;
+        margin: 2px;
+        padding: 4px;
+        font-size: 14px;
+      }
+      "),
       @Div() .. CSS() ::
         Filter .. @transform(filter ->
                              @ScrollStream({tolerance:1000}) ::
@@ -281,6 +291,9 @@ function StoryEditPalette(session, Selection) {
 
   var ToolbarCSS = @CSS(
     `
+    {
+      display: none;
+    }
     > div { display: inline-block;
             width: ${100/tools.length}%;
             cursor: pointer;
