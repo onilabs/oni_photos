@@ -22,16 +22,26 @@ var StaticBlockContentConstructors = {
 };
 exports.StaticBlockContentConstructors = StaticBlockContentConstructors;
 
-function StoryBlock(descriptor, isFullwidth, ContentConstructors) {
+
+function StoryBlockContent(descriptor, ContentConstructors) {
   if (descriptor.hidden || !descriptor.type) 
     return undefined;
-
-  var rv = @Div() .. @Class('story-block') .. @Class('is-fullwidth', isFullwidth);
 
   var ctor = ContentConstructors[descriptor.type];
   if (!ctor) throw new Error("Unknown block type '#{descriptor.type}'");
 
-  rv = rv .. @Content(ctor(descriptor));
+  return ctor(descriptor);
+}
+exports.StoryBlockContent = StoryBlockContent;
+
+function StoryBlock(hidden, isFullwidth, content) {
+
+  var rv = @Div()
+           .. @Class('story-block')
+           .. @Class('hidden', hidden)
+           .. @Class('is-fullwidth', isFullwidth);
+
+  rv = rv .. @Content(content);
 
   return rv;
 }
@@ -60,7 +70,7 @@ exports.publishedStory = function(story_content) {
   function StoryRow(descriptor) {
     var rv;
     var count = descriptor .. @filter(b -> !b.hidden && b.type) .. @count();
-    return descriptor .. @map(b -> StoryBlock(b,count===1, StaticBlockContentConstructors));
+    return descriptor .. @map(b -> StoryBlock(b.hidden || !b.type,count===1, StoryBlockContent(b, StaticBlockContentConstructors)));
   }
 
   return @Div() .. @Class('story-wrapper') ::

@@ -115,6 +115,14 @@ BlockContentConstructors['txt'] = descriptor ->
                                            @backfill.PlainTextEditor() ..
                                            @Style('height:100%')
                                        ];
+// override 'img' block to take image from Value:
+BlockContentConstructors['img'] =
+  descriptor ->
+    @Div()
+    .. @Class('story-image')
+    .. @Attrib('style', @field.Value() .. @transform(b->'background-image: url(' + b.url + ')'))
+    .. @Attrib('data-width', 800)
+    .. @Attrib('data-height', 800);
 
 
 function StoryEditWidget(StoryContent, Selection) {
@@ -147,24 +155,26 @@ function StoryEditWidget(StoryContent, Selection) {
   });
   
   function col_template() {
-    var rv = @Stream(function(receiver) {
-      var current_type;
-      @field.Value() .. @each {
-        |descriptor|
-        if (descriptor.type === current_type)
-          continue;
-        current_type = descriptor.type;
-        
-        receiver(@static.StoryBlock(descriptor,
-                                    @field.Value('.')
-                                    .. @transform(row -> row
-                                                         .. @filter(b -> !b.hidden && b.type)
-                                                                     .. @count() === 1),
-                                    BlockContentConstructors)
-                 .. @backfill.cmd.Click('select-block', ev -> ev.currentTarget)
-                );
-      }
-    });
+    var rv =
+      @static.StoryBlock(@field.Value() .. @transform(b->!b.hidden && b.type),
+                         @field.Value('.')
+                         .. @transform(row -> row
+                                       .. @filter(b -> !b.hidden && b.type)
+                                       .. @count() === 1),
+                         @Stream(function(receiver) {
+                           var current_type;
+                           @field.Value() .. @each {
+                             |descriptor|
+                             if (descriptor.type === current_type)
+                               continue;
+                             current_type = descriptor.type;
+
+                             receiver(@static.StoryBlockContent(descriptor,
+                                                                BlockContentConstructors))
+                           }
+                         })
+                        )
+      .. @backfill.cmd.Click('select-block', ev -> ev.currentTarget);
 
     return rv;
   }

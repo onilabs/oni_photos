@@ -102,6 +102,10 @@ exports.content = function(param) {
     border: 2px solid #29c4fb;
   }
 
+  .story-block[hidden] {
+    display: none;
+  }
+
   .story-block:nth-child(even) {
     border-left-width: #{gridPadding};
     // clear: right;
