@@ -7,7 +7,8 @@
   'mho:app',
   {id:'./backfill', name:'backfill'},
   {id:'mho:surface/nodes', name:'nodes'},
-  {id:'mho:surface/field', name:'field'}
+  {id:'mho:surface/field', name:'field'},
+  {id:'lib:static_html', name:'static'}
 ]);
 
 //----------------------------------------------------------------------
@@ -100,78 +101,47 @@ exports.HorizontalPhotoStream = HorizontalPhotoStream;
    @summary XXX write me
    @param {sjs:observable::Observable} [story_content]
 */
-function StoryEditWidget(StoryContent, Selection) {
-  var width = document.body.clientWidth-20;
-  var image_size = Math.min(288, Math.floor(width/2-8));
-  
-  var CSS = @CSS("
 
-  ");
+
+var BlockContentConstructors = @static.StaticBlockContentConstructors .. @clone;
+// override 'txt' block to make it editable:
+BlockContentConstructors['txt'] = descriptor ->
+                                   @field.FieldMap() ::
+                                     @Div() .. @Class('story-txt') ::
+                                       [
+                                         // xxx the span is a hack to keep the 'type' value
+                                         @Span() .. @field.Field('type'),
+                                         @field.Field('content') ::
+                                           @backfill.PlainTextEditor() ..
+                                           @Style('height:100%')
+                                       ];
+
+
+function StoryEditWidget(StoryContent, Selection) {
 
   function col_template() {
-    var rv = @Div() ..
-      @Class('story-block') ..
-      @backfill.cmd.Click('select-block', ev -> ev.currentTarget) ..
-        @Mechanism(function(node) {
-          var current_type;
-          @field.Value() .. @each {
-            |descriptor|
-            if (descriptor.type === current_type) 
-              continue;
-            current_type = descriptor.type;
-            if (descriptor.type === 'img') {
-              node .. @replaceContent(
-                @Img() .. 
-                  @Attrib('src', 
-                          @field.Value() .. @transform({url} -> url)
-                         )
-              );
-            }
-            else if (descriptor.type === 'txt') {
-              node .. @replaceContent(
-                @field.FieldMap() ::
-                  @Div() ::
-                    [
-                      // xxx the span is a hack to keep the 'type' value
-                      @Span() .. @field.Field('type'),
-                      @field.Field('content') ::
-                        @backfill.PlainTextEditor() ..
-                        @Style('height:100%')
-                    ]
-              )                
-            }
-            else {
-              node .. @replaceContent(@Div() :: 'unknown block');
-            }
-                  
-          } /* @each */
-        });
-
-    return rv .. @Mechanism(function(node) {
-      @backfill.cmd.stream(['select-block']) .. @each {
-        |[cmd, cell]|
-        var selected_cell = Selection .. @current();
-        if (selected_cell) {
-          selected_cell.removeAttribute('selected');
-          
-          // remove the focus if we're moving from contenteditable to not-contenteditable:
-          var old_editable = selected_cell.querySelector('[contenteditable]');
-          var new_editable = cell.querySelector('[contenteditable]');
-
-          if (old_editable && !new_editable) {
-            // see http://stackoverflow.com/questions/4878713/how-can-i-blur-a-div-where-contenteditable-true
-            old_editable.blur();
-            window.getSelection().removeAllRanges();
-            hold(0);
-          }
-
-        }
-        Selection.set(cell);
-        cell.setAttribute('selected', true);
-          
+    var rv = @Stream(function(receiver) {
+      var current_type;
+      @field.Value() .. @each {
+        |descriptor|
+        if (descriptor.type === current_type)
+          continue;
+        current_type = descriptor.type;
+        
+        receiver(@static.StoryBlock(descriptor,
+                                    @field.Value('.')
+                                    .. @transform(row -> row
+                                                         .. @filter(b -> !b.hidden && b.type)
+                                                                     .. @count() === 1),
+                                    BlockContentConstructors)
+                 .. @backfill.cmd.Click('select-block', ev -> ev.currentTarget)
+                );
       }
     });
+
+    return rv;
   }
+
   
   function row_template() {
     return @Div() .. @field.FieldArray(col_template);

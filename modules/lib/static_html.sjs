@@ -7,7 +7,7 @@
 // building blocks
 
 
-var StaticContentConstructors = {
+var StaticBlockContentConstructors = {
   'img': descriptor -> 
            @Div()
            .. @Class('story-image')
@@ -20,13 +20,13 @@ var StaticContentConstructors = {
            .. @Class('story-txt')
            :: descriptor.content
 };
-exports.StaticContentConstructors = StaticContentConstructors;
+exports.StaticBlockContentConstructors = StaticBlockContentConstructors;
 
-function StoryBlock(descriptor, rowLength, ContentConstructors) {
+function StoryBlock(descriptor, isFullwidth, ContentConstructors) {
   if (descriptor.hidden || !descriptor.type) 
     return undefined;
 
-  var rv = @Div() .. @Class('story-block' + (rowLength === 1 ? ' is-fullwidth' : ''));
+  var rv = @Div() .. @Class('story-block') .. @Class('is-fullwidth', isFullwidth);
 
   var ctor = ContentConstructors[descriptor.type];
   if (!ctor) throw new Error("Unknown block type '#{descriptor.type}'");
@@ -60,7 +60,7 @@ exports.publishedStory = function(story_content) {
   function StoryRow(descriptor) {
     var rv;
     var count = descriptor .. @filter(b -> !b.hidden && b.type) .. @count();
-    return descriptor .. @map(b -> StoryBlock(b,count, StaticContentConstructors));
+    return descriptor .. @map(b -> StoryBlock(b,count===1, StaticBlockContentConstructors));
   }
 
   return @Div() .. @Class('story-wrapper') ::
