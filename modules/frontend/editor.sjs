@@ -41,7 +41,6 @@ console.log(arguments .. @inspect);
     .body {
       overflow: auto;
       -webkit-overflow-scrolling: touch;
-      padding: 10px;
     }
 
     .toolbox {
