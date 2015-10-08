@@ -91,8 +91,8 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
     <div class='menubar'>
       <div class='menubar-logo'></div>
       <div class='menubar-menu'>
-        <div class='menubar-menu-session'></div>
         <div class='menubar-menu-context'></div>
+        <div class='menubar-menu-session'></div>
       </div>
     </div>
     <div class='main-content'>${content}</div>

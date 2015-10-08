@@ -54,7 +54,31 @@ exports.content = function(param) {
   }
   .menubar-menu > * {
     display: inline-block;
+    float: left; /*flex?*/
   }
+  .menubar-menu-session-avatar {
+    height: 32px;
+    width: 32px;
+    background-image: url(https://cdn-images-1.medium.com/fit/c/80/80/0*Uz4JNcuuzsztGpxg.jpeg);
+    background-size: cover;
+    border-radius: 100%;
+  }
+  .menubar-button {
+    display: inline-block;
+    height: 32px;
+    margin-right: 8px;
+    line-height: 32px;
+    border: 1px solid #f4f4f4;
+    border-radius: 15px;
+    color: #888;
+    text-decoration: none;
+    text-align: center;
+    padding: 0 20px;
+  }
+  .menubar-button.is-save {
+    color: #6ABD29
+  }
+
   .story-wrapper {
     width: 80%;
     max-width: 900px;
@@ -142,7 +166,7 @@ exports.content = function(param) {
     width: 100%;
     height: 0;
     padding-bottom: 100%;
-    background-color: #fafafa;
+    background-color: #f8f8f8;
     background-image: url(/frontend/assets/add-image.svg);
     background-size: 40px;
     background-repeat: no-repeat;

@@ -90,7 +90,7 @@ function do_show_story(url,story_id) {
       @env('Session') .. 
         @transform(session ->
                    session ?
-                   `<a href="/story/${story_id}/edit">Edit story</a>`)
+                   `<a class="menubar-button" href="/story/${story_id}/edit">Edit</a>`)
     ) {
       ||
       hold();

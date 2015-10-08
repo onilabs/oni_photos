@@ -71,7 +71,7 @@ console.log(arguments .. @inspect);
     }
     or {
       @contextMenu .. @replaceContent(
-        `<a href="/story/${story_id}">View published story</a>`
+        `<a class="menubar-button is-save" href="/story/${story_id}">Stop editing</a>`
       ) {
         ||
         hold();

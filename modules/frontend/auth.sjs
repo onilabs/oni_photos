@@ -93,7 +93,7 @@ function doUserLogin() {
 
 function doUserLogout() {
  @sessionMenu .. @replaceContent(
-    @widgets.Action('logout') :: "Log out #{(@env('Session') .. @current()).user}"
+    @widgets.Action('logout') :: @Div() .. @Class('menubar-menu-session-avatar')
   ) {
     ||
     @backfill.cmd.stream(['logout']) .. @each {
