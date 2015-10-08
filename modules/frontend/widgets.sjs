@@ -119,6 +119,30 @@ BlockContentConstructors['txt'] = descriptor ->
 
 function StoryEditWidget(StoryContent, Selection) {
 
+  var SelectionMechanism = @Mechanism(function(node) {
+    @backfill.cmd.stream(['select-block']) .. @each {
+      |[cmd, block]|
+      var selected_block = Selection .. @current();
+      if (selected_block) {
+        selected_block.removeAttribute('selected');
+
+        // remove the focus if we're moving from contenteditable to not-contenteditable:
+        var old_editable = selected_block.querySelector('[contenteditable]');
+        var new_editable = block.querySelector('[contenteditable]');
+
+        if (old_editable && !new_editable) {
+          // see http://stackoverflow.com/questions/4878713/how-can-i-blur-a-div-where-contenteditable-true
+          old_editable.blur();
+          window.getSelection().removeAllRanges();
+          hold(0);
+        }
+      }
+
+      Selection.set(block);
+      block.setAttribute('selected', true);
+    }
+  });
+  
   function col_template() {
     var rv = @Stream(function(receiver) {
       var current_type;
@@ -146,8 +170,8 @@ function StoryEditWidget(StoryContent, Selection) {
   function row_template() {
     return @Div() .. @field.FieldArray(col_template);
   }
-
-  return @Div() .. @Class('story-wrapper') ::
+  
+  return @Div() .. @Class('story-wrapper') .. SelectionMechanism ::
     `
     <div class="story-header">
       <h1 class="story-title">That time we went to the India</h1>
