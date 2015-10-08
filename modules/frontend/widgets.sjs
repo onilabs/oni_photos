@@ -138,6 +138,9 @@ function StoryEditWidget(StoryContent, Selection) {
         }
       }
 
+      if (new_editable) {
+        new_editable.focus();
+      }
       Selection.set(block);
       block.setAttribute('selected', true);
     }
