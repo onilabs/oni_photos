@@ -71,11 +71,11 @@ exports.publishedStory = function(story_content) {
   return @Div() .. @Class('story-wrapper') ::
       `
       <div class="story-header">
-        <h1 class="story-title">That time we went to the India</h1>
         <div class="story-author">
           <span class="story-author-face"><img src="https://scontent-lga3-1.cdninstagram.com/hphotos-xfa1/t51.2885-15/e35/11849996_1497391333904305_1121696930_n.jpg"/></span>
-          <span class="story-author-name">Photo story by Eytan Daniyalzade</span>
+          <span class="story-author-name">Eytan Daniyalzade</span>
         </div>
+        <h1 class="story-title">That time we went to the India</h1>
       </div>
       <div class="story-content">
       ${
@@ -83,7 +83,7 @@ exports.publishedStory = function(story_content) {
       }
       </div>
       <div class="story-footer">
-        Were you there? Help Eytan tell this story by dropping related pictures on this page.
+        The End
       </div>
       `;
 };

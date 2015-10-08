@@ -92,11 +92,23 @@ exports.content = function(param) {
   .story-title {
     font-size: 36px;
     font-weight: 700;
+    margin-top: 50px;
+    position: relative;
+  }
+  .story-title:before {
+    content: ' ';
+    height: 3px;
+    width: 30px;
+    position: absolute;
+    left: 50%;
+    background-color: #{colorText};
+    margin-left: -15px;
+    top: -22px;
   }
   .story-author {
-    margin-top: -10px;
-    font-size: 18px;
-    font-weight: 300;
+    margin-top: 10px;
+    font-size: 16px;
+    font-weight: 400;
     color: #7E53A3;
   }
   .story-author-face {
@@ -104,17 +116,17 @@ exports.content = function(param) {
     height: 60px;
     overflow: hidden;
     border-radius: 100%;
-    display: inline-block;
+    display: block;
     vertical-align: middle;
-    margin: -4px 10px 0 0;
+    margin: 0 auto 10px auto;
   }
   .story-author-face img {
     width: 100%;
   }
   .story-footer {
-    font-size: 20px;
-    font-weight: 400;
-    color: #{colorText};
+    font-size: 16px;
+    font-weight: 600;
+    color: #ccc;
     margin: 100px auto 100px auto;
     width: 400px;
     text-align: center;
