@@ -207,50 +207,6 @@ function StoryEditWidget(StoryContent, Selection) {
 }
 exports.StoryEditWidget = StoryEditWidget;
 
-
-// tabs: [{ title, content }]
-function TabWidget(tabs) {
-
-  var l = tabs .. @count;
-
-  var TabHeaderCSS = @CSS(
-    `
-    > div { display: inline-block;
-            width: ${100/l}%;
-            cursor: pointer;
-          }
-    > div[active] { color:white; }
-    `)
-
-  var ActiveTab = @ObservableVar(0);
-
-  var CmdHandler = @Mechanism(function(node) {
-    @backfill.cmd.stream(['tab']) .. @each {
-      |[cmd, param]|
-      ActiveTab.set(param);
-    }
-  });
-
-  var rv =
-    @Div ::
-    [
-      // tab content
-      @Div() .. @Class('tab-content') ::
-        ActiveTab .. @transform(index -> tabs[index].content),
-
-      // tab footer
-      @Div .. TabHeaderCSS .. @Class('tab-header') .. CmdHandler ::
-        tabs ..
-          @indexed ..
-          @map([i, {title}] -> @Div(title) ..
-                                 @backfill.cmd.Click('tab', i) ..
-                                 @Attrib('active', ActiveTab .. @transform(tab -> tab == i))
-              )                               
-    ];
-
-  return rv;
-}
-
 /**
    @function storyEditPalette
    @summary Tools palette for editing stories
