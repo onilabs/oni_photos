@@ -36,21 +36,18 @@ console.log(arguments .. @inspect);
   var EditorCSS = @CSS("
     {
       height: 100%;
-      display: flex;
-      flex-direction: column;
-      flex-wrap: nowrap;
     }
 
     .body {
-      flex-grow: 1;
       overflow: auto;
       -webkit-overflow-scrolling: touch;
       padding: 10px;
     }
 
     .toolbox {
-      flex-shrink: 0;
-      background-color: #1e1e1e;
+      position: fixed;
+      right: 0; bottom: 0; left: 0;
+      background-color: rgba(0, 0, 0, .9);
     }
   ");
   
