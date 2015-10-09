@@ -10,7 +10,7 @@ exports.content = function(param) {
   
   var CSS = "\
 
-  @import url(https://fonts.googleapis.com/css?family=Roboto:700,400,300);
+  @import url(https://fonts.googleapis.com/css?family=Roboto:700,500,400);
   * {
     box-sizing: border-box;
   }
@@ -74,18 +74,24 @@ exports.content = function(param) {
   .menubar-button {
     display: inline-block;
     height: 32px;
+    line-height: 31px;
     margin-right: 8px;
-    line-height: 32px;
+    font-weight: 500;
+    font-size: 14px;
     border: 1px solid #f4f4f4;
     border-radius: 15px;
-    color: #888;
+    color: #445;
     text-decoration: none;
     text-align: center;
     padding: 0 20px;
     cursor: pointer;
+
   }
   .menubar-button.is-save {
     color: #6ABD29
+  }
+  .menubar-button:hover {
+    border-color: #e0e0e1;
   }
   .project-wrapper {
     margin-top: 40px;
