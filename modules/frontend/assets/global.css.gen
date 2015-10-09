@@ -31,7 +31,10 @@ exports.content = function(param) {
     color: #333;
     font-family: 'Roboto', sans-serif;
   }
-  #mainContent {
+  .main-content {
+    width: 80%;
+    max-width: 900px;
+    margin: 0 auto;
   }
   .menubar {
     display: flex;
@@ -80,9 +83,7 @@ exports.content = function(param) {
   }
 
   .story-wrapper {
-    width: 80%;
-    max-width: 900px;
-    margin: 0 auto;
+
   }
   .story-header {
     color: #{colorText};

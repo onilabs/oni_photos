@@ -38,17 +38,16 @@ function do_index_no_session() {
 }
 
 function do_index_with_session(session) {
+  // @contextMenu .. @replaceContent(@widgets.Action('add_story') :: 'Create new story');
   @mainContent .. @replaceContent(
     @Div() ::
       [
-        @widgets.Action('add_story') :: 'Create new story',
-
         session.Stories() .. @transform(function(stories) {
           var arr = stories ..
-            @map(id -> @Li(` ${id} 
-                             <a href="/story/${id}/edit">edit</a>
+            @map(story -> @Li(` ${story.title}
+                             <a href="/story/${story.id}/edit">edit</a>
                              &nbsp;
-                             <a href="/story/${id}">public url</a>
+                             <a href="/story/${story.id}">public url</a>
                            `
                            ));
           
@@ -73,7 +72,7 @@ function do_index_with_session(session) {
         return;
       }
     }
-  }  
+  }
 }
 
 //----------------------------------------------------------------------

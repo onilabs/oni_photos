@@ -109,6 +109,14 @@ function Stories(user_id) {
   return USERS() ..
     @kv.Subspace([user_id, 'stories_index']) ..
     @kv.observeQuery(@kv.RANGE_ALL) ..
-    @transform(kvs -> kvs .. @project([key,val] -> key));
+    @transform(kvs -> kvs .. @project(function([key,val]) {
+      var story_data = require('./stories').getPublicStory(key);
+      var thumbnail = story_data && story_data[0] ? story_data[0][0] : undefined;
+      return {
+        id: key,
+        title: 'Black Widow Pt.2',
+        thumbnail: thumbnail
+      }
+    }));
 }
 exports.Stories = Stories;
