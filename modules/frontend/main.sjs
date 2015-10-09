@@ -64,13 +64,16 @@ function do_index_with_session(session) {
       ]
   ) {
     ||
-    @backfill.cmd.stream(['add_story']) .. @each {
-      |[cmd, param]|
-      if (cmd === 'add_story') {
-        var id = session.createStory();
-        @navigation.navigate("/story/#{id}/edit");
-        return;
-      }
+    
+    @contextMenu .. @replaceContent(
+      @Button('Create new story') ..
+        @OnClick(function() {
+          var id = session.createStory();
+          @navigation.navigate("/story/#{id}/edit");
+        })
+    ) {
+      ||
+      hold();
     }
   }
 }
