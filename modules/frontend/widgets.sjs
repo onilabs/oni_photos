@@ -70,6 +70,12 @@ function HorizontalPhotoStream(session) {
       overflow-x: scroll;
       height: 123px;
     }
+    :hover {
+      -webkit-filter: brightness(.95);
+    }
+    :active {
+      transform: scale(.96);
+    }
     img {
       width: #{image_size}px;
       height: #{image_size}px;
