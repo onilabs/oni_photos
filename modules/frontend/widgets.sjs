@@ -269,14 +269,13 @@ function StoryEditPalette(session, Selection) {
                    @backfill.cmd.stream(['click-photo']) .. @each {
                      |[cmd,url]|
                      var selection = Selection .. @current();
-
-                     selection.classList.add('block-changed');
-                     selection.addEventListener('animationend', function() {
-                       selection.classList.remove('block-changed');
-                     });
-
-                     if (selection)
+                     if (selection) {
+                       selection.classList.add('block-changed');
+                       selection.addEventListener('animationend', function() {
+                         selection.classList.remove('block-changed');
+                       });
                        (selection .. @field.Value()).set({type:'img', url:url});
+                     }
                    }
                  })
     },
