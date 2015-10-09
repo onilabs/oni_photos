@@ -266,8 +266,12 @@ exports.content = function(param) {
     opacity: 0;
   }
   @media (max-width: 800px) {
-    .story-wrapper {
+    .main-content {
       width: 100%;
+    }
+    .story-block,
+    .project-block {
+      border-width: 2px;
     }
   }
 ";
