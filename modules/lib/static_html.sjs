@@ -56,7 +56,14 @@ exports.StoryBlock = StoryBlock;
 // static pages
 
 exports.index = -> `
-  <h1>Create photo based stories with friends & family</h1>
+  <div class="intro">
+    <h2>What’s this all about?</h2>
+    <p>
+    Our goal is to make it really easy for people
+    to create collections of pictures together
+    without having to upload them to a social network or own the save device.
+    </p>
+  </div>
   `;
 
 

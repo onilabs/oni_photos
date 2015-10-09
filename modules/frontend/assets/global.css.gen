@@ -41,6 +41,20 @@ exports.content = function(param) {
     max-width: 900px;
     margin: 0 auto;
   }
+  .intro {
+    max-width: 500px;
+    padding: 0 30px;
+    margin: 80px auto;
+    text-align: center;
+    font-size: 22px;
+  }
+  .intro h2 {
+    font-weight: 400;
+    color: #7E53A3;
+  }
+  .intro p {
+    color: #{colorText};
+  }
   .menubar {
     display: flex;
     flex-direction: row;
