@@ -12,6 +12,12 @@
 ]);
 
 //----------------------------------------------------------------------
+// helpers
+
+// XXX this should go elsewhere
+var isRowEmpty = row -> row .. @all(block -> block.type=='blank');
+
+//----------------------------------------------------------------------
 /**
    @function Action
    @summary XXX write me
@@ -191,8 +197,31 @@ function StoryEditWidget(StoryContent, Selection) {
 
   
   function row_template() {
-    return @Div() .. @field.FieldArray(col_template);
+    return @Div() ..
+      @field.FieldArray(col_template);
   }
+
+  var CompromisedRowMechanism = @Mechanism(function() { 
+    // if the last row contains at least one empty block, we'll add another row
+    // also, if the last 2 rows become empty, remove last row
+    @field.Value() .. @each.track {
+      |rows|
+      hold(100); // small delay before we do anything
+      if (!rows.length) {
+        @field.Value().set([[{type:'blank'},{type:'blank'},{type:'blank'}]]); 
+      }
+      else if (rows.length > 1 &&
+               isRowEmpty(rows[rows.length-1]) &&
+               isRowEmpty(rows[rows.length-2])) {
+        // remove last row
+        @field.Value().set(rows.slice(0,rows.length-2));
+      }
+      else if (!isRowEmpty(rows[rows.length-1])) {
+        // add a new blank row
+        @field.Value().set(rows.concat([[{type:'blank'},{type:'blank'},{type:'blank'}]]));
+      }        
+    }
+  });
   
   return @Div() .. @Class('story-wrapper') .. SelectionMechanism ::
     `
@@ -207,7 +236,8 @@ function StoryEditWidget(StoryContent, Selection) {
       @Div() ..
       @Class("story-content") ..
       @field.Field("content") ..
-      @field.FieldArray(row_template)
+      @field.FieldArray(row_template) ..
+      CompromisedRowMechanism  
     }
     <div class="story-footer">
       The End

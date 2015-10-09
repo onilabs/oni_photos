@@ -28,16 +28,7 @@ var STORIES = transaction -> (transaction||@env('services').db) .. @kv.Subspace(
 //----------------------------------------------------------------------
 
 var blank_story = {
-  content: [
-    [{type:'blank'},{type:'blank'}],
-    [{type:'blank'},{type:'blank'}],
-    [{type:'blank'},{type:'blank'}],
-    [{type:'blank'},{type:'blank'}],
-    [{type:'blank'},{type:'blank'}],
-    [{type:'blank'},{type:'blank'}],
-    [{type:'blank'},{type:'blank'}],
-    [{type:'blank'},{type:'blank'}]
-  ]
+  content: []
 };
 
 

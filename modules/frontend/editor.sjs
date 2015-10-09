@@ -10,7 +10,7 @@
 //----------------------------------------------------------------------
 
 function do_edit_story(story_id) {
-console.log(arguments .. @inspect);
+
   var session = @env('Session') .. @filter(x->!!x) .. @first();
 
   // xxx hack
