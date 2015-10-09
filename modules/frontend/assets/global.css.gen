@@ -101,6 +101,13 @@ exports.content = function(param) {
     margin-top: 50px;
     position: relative;
   }
+  .story-title-content {
+    outline: none;
+    min-width: 200px;
+    background: #fff;
+    border-radius: 2px;
+    display: inline-block;
+  }
   .story-title:before {
     content: ' ';
     height: 3px;

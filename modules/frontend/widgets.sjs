@@ -225,7 +225,9 @@ function StoryEditWidget(StoryContent, Selection) {
         <span class="story-author-face"><img src="https://scontent-lga3-1.cdninstagram.com/hphotos-xfa1/t51.2885-15/e35/11849996_1497391333904305_1121696930_n.jpg"/></span>
         <span class="story-author-name">Eytan Daniyalzade</span>
       </div>
-      <h1 class="story-title">That time we went to the India</h1>
+      <h1 class="story-title">
+        <span class="story-title-content" contentEditable="true">That time we went to the India</span>
+      </h1>
     </div>
     ${
       @Div() ..
