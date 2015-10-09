@@ -115,7 +115,7 @@ function Stories(user_id) {
       return {
         id: key,
         title: 'Black Widow Pt.2',
-        thumbnail: thumbnail
+        thumbnail: 'https://lh3.googleusercontent.com/--lGUEyA80U8/VfW3cGdnm6I/AAAAAAAAHv4/6Apwg7NUj0U/s750-c/485678645903862683_15881513.jpg'
       }
     }));
 }

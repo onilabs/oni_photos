@@ -44,22 +44,24 @@ function do_index_with_session(session) {
       [
         session.Stories() .. @transform(function(stories) {
           var arr = stories ..
-            @map(story -> @Li(` ${story.title}
-                             <a href="/story/${story.id}/edit">edit</a>
-                             &nbsp;
-                             <a href="/story/${story.id}">public url</a>
+            @map(story -> @Div(`
+                             <a class="project-image"
+                                href="/story/${story.id}"
+                                style="background-image:url(${story.thumbnail})">
+                                <div class="project-title">${story.title}</div>
+                             </a>
                            `
-                           ));
+                           ) .. @Class('project-block'));
           
           if (!arr.length) {
-            return `<h1>You do not have any photo stories yet.</h1>
+            return `<p>You do not have any photo stories yet.</p>
                     <hr>
                     <p>Photo stories allows you to create simple and beautiful photo & text based
                     albums using your existing photos in the cloud.</p>
                    `
           }
           else
-            return @Ul(arr);
+            return @Div(arr) .. @Class('project-wrapper');
         })
       ]
   ) {

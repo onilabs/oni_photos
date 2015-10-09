@@ -81,9 +81,8 @@ exports.content = function(param) {
   .menubar-button.is-save {
     color: #6ABD29
   }
-
-  .story-wrapper {
-
+  .project-wrapper {
+    margin-top: 40px;
   }
   .story-header {
     color: #{colorText};
@@ -136,7 +135,8 @@ exports.content = function(param) {
     width: 110px;
     margin-top: 10px;
   }
-  .story-block {
+  .story-block,
+  .project-block {
     position: relative;
     width: 33.33%;
     border-color: transparent;
@@ -145,6 +145,17 @@ exports.content = function(param) {
     display: block;
     float: left;
     cursor: pointer;
+  }
+  .project-title {
+    position: absolute;
+    top: 0; right: 0; bottom: 0; left: 0;
+    display: flex;
+    justify-content: center;
+    -webkit-box-align: center;
+    align-items: center;
+    color: #fff;
+    font-weight: 700;
+    font-size: 18px;
   }
   .story-block:hover  {
     transition: -webkit-filter 200ms ease;
@@ -188,7 +199,9 @@ exports.content = function(param) {
     background-repeat: no-repeat;
     background-position: center center;
   }
-  .story-image {
+  .story-image,
+  .project-image {
+    display: inline-block;
     width: 100%;
     height: 0;
     padding-bottom: 100%;
