@@ -143,15 +143,25 @@ exports.content = function(param) {
     border-width: #{gridPadding};
     display: block;
     float: left;
+    cursor: pointer;
+  }
+  .story-block:hover  {
+    transition: -webkit-filter 200ms ease;
+    -webkit-filter: brightness(.94);
   }
 
-  .story-block[selected]::before {
+  .story-block::before {
     content: ' ';
     position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;
     display: block;
-    border: 2px solid #29c4fb;
+    border: 3px solid transparent;
+    transition: border 200ms ease;
   }
+  .story-block[selected]::before {
+    border: 3px solid #29c4fb;
+  }
+
   .story-block[hidden] {
     display: none;
   }
