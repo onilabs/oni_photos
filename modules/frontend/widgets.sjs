@@ -8,14 +8,9 @@
   {id:'./backfill', name:'backfill'},
   {id:'mho:surface/nodes', name:'nodes'},
   {id:'mho:surface/field', name:'field'},
-  {id:'lib:static_html', name:'static'}
+  {id:'lib:static_html', name:'static'},
+  {id:'lib:datastructures', name:'data'}
 ]);
-
-//----------------------------------------------------------------------
-// helpers
-
-// XXX this should go elsewhere
-var isRowEmpty = row -> row .. @all(block -> block.type=='blank');
 
 //----------------------------------------------------------------------
 /**
@@ -211,12 +206,12 @@ function StoryEditWidget(StoryContent, Selection) {
         @field.Value().set([[{type:'blank'},{type:'blank'},{type:'blank'}]]); 
       }
       else if (rows.length > 1 &&
-               isRowEmpty(rows[rows.length-1]) &&
-               isRowEmpty(rows[rows.length-2])) {
+               @data.isRowEmpty(rows[rows.length-1]) &&
+               @data.isRowEmpty(rows[rows.length-2])) {
         // remove last row
         @field.Value().set(rows.slice(0,rows.length-2));
       }
-      else if (!isRowEmpty(rows[rows.length-1])) {
+      else if (!@data.isRowEmpty(rows[rows.length-1])) {
         // add a new blank row
         @field.Value().set(rows.concat([[{type:'blank'},{type:'blank'},{type:'blank'}]]));
       }        

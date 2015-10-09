@@ -17,7 +17,8 @@
 
 @ = require([
   'mho:std',
-  {id:'mho:flux/kv', name:'kv'}
+  {id:'mho:flux/kv', name:'kv'},
+  {id:'lib:datastructures', name:'data'}
 ]);
 
 // XXX could cache value
@@ -111,11 +112,11 @@ function Stories(user_id) {
     @kv.observeQuery(@kv.RANGE_ALL) ..
     @transform(kvs -> kvs .. @project(function([key,val]) {
       var story_data = require('./stories').getPublicStory(key);
-      var thumbnail = story_data && story_data[0] ? story_data[0][0] : undefined;
       return {
         id: key,
         title: 'Black Widow Pt.2',
-        thumbnail: 'https://lh3.googleusercontent.com/--lGUEyA80U8/VfW3cGdnm6I/AAAAAAAAHv4/6Apwg7NUj0U/s750-c/485678645903862683_15881513.jpg'
+        // XXX the trycatch is just because i have some broken data in my db
+        thumbnail: @fn.trycatch(@data.titleThumb, -> null)(story_data)
       }
     }));
 }
