@@ -59,9 +59,9 @@ exports.index = -> `
   <div class="intro">
     <h2>What’s this all about?</h2>
     <p>
-    Our goal is to make it really easy for people
-    to create collections of pictures together
-    without using a social network or own the same device.
+    Our goal is to make it really easy for <span style="white-space:nowrap">friends &amp; family</span>
+    to create collections of pictures together.
+    We avoid uploading to social networks and device specific tools.</span>
     </p>
   </div>
   `;
