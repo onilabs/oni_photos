@@ -61,7 +61,7 @@ function doUserLogin() {
 
   // if we're here, the user needs to log explicitly
   @sessionMenu .. @replaceContent(
-    @widgets.Action('google_login') :: "Log in with Google"
+    @widgets.Action('google_login') :: `<div class="menubar-button">Log in with Google</div>`
   ) {
     ||
     @backfill.cmd.stream(['google_login']) .. @each {
