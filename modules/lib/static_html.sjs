@@ -61,7 +61,7 @@ exports.index = -> `
     <p>
     Our goal is to make it really easy for people
     to create collections of pictures together
-    without having to upload them to a social network or own the save device.
+    without using a social network or own the same device.
     </p>
   </div>
   `;
