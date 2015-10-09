@@ -22,6 +22,11 @@ exports.content = function(param) {
     color: #29c5f4;
   }
 
+  a > * {
+    /* this enables our client-side routing to work with clicks on content inside a elements */
+    pointer-events: none;
+  }
+
   .action[disabled] {
     color: #6b6b6b;
   }
