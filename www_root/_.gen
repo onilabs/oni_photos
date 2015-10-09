@@ -89,7 +89,7 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
   </head>
   <body>
     <div class='menubar'>
-      <div class='menubar-logo'></div>
+      <a class='menubar-logo' href='/'></a>
       <div class='menubar-menu'>
         <div class='menubar-menu-context'></div>
         <div class='menubar-menu-session'></div>
