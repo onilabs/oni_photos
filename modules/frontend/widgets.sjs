@@ -84,7 +84,8 @@ function HorizontalPhotoStream(session) {
       @Input({type: 'search', value: Filter}) .. @Attrib('placeholder', 'Search') .. @CSS("
       {
         border: 0;
-        background: #383737;
+        border-bottom: 1px solid #eee;
+        background: #fff;
         color: #171616;
         outline: 0;
         min-width: 260px;

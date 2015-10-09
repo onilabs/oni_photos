@@ -46,7 +46,8 @@ function do_edit_story(story_id) {
     .toolbox {
       position: fixed;
       right: 0; bottom: 0; left: 0;
-      background-color: rgba(0, 0, 0, .9);
+      background-color: #fff;
+      box-shadow: 0px -1px 8px 0px rgba(78,45,45,0.12);
     }
   ");
   

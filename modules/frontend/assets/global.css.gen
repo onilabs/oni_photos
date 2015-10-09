@@ -46,7 +46,6 @@ exports.content = function(param) {
     flex-direction: row;
     flex-wrap: nowrap;
     justify-content: space-between;
-    border-bottom:1px solid grey;
     background: #fff;
     padding: 10px;
     border-bottom: 1px solid #DBDBDB;
