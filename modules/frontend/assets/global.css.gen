@@ -77,6 +77,7 @@ exports.content = function(param) {
     text-decoration: none;
     text-align: center;
     padding: 0 20px;
+    cursor: pointer;
   }
   .menubar-button.is-save {
     color: #6ABD29

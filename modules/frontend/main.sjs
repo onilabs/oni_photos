@@ -68,7 +68,7 @@ function do_index_with_session(session) {
     ||
     
     @contextMenu .. @replaceContent(
-      @Button('Create new story') ..
+      @Div('Create new story') .. @Class('menubar-button') ..
         @OnClick(function() {
           var id = session.createStory();
           @navigation.navigate("/story/#{id}/edit");
