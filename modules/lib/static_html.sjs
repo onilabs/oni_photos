@@ -72,8 +72,8 @@ exports.publishedStory = function(story_content) {
       `
       <div class="story-header">
         <div class="story-author">
-          <span class="story-author-face"><img src="https://scontent-lga3-1.cdninstagram.com/hphotos-xfa1/t51.2885-15/e35/11849996_1497391333904305_1121696930_n.jpg"/></span>
-          <span class="story-author-name">Eytan Daniyalzade</span>
+          <span class="story-author-face"><img src="https://pbs.twimg.com/profile_images/606752573341601792/NNL4kd5v.jpg"/></span>
+          <span class="story-author-name">Farah Chan</span>
         </div>
         <h1 class="story-title">That time we went to the India</h1>
       </div>
