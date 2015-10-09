@@ -83,7 +83,6 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
   
     <script type='text/sjs'>
       require('/hubs');
-      require('frontend:published_story_interactions'); // XXX
       require('frontend:main').main(${startup_parameters .. @RawHTML});
     </script>
   </head>
