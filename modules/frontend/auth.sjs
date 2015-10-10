@@ -93,8 +93,15 @@ function doUserLogin() {
 
 function doUserLogout() {
  @sessionMenu .. @replaceContent(
-    @widgets.Action('logout') :: 
-     @Div() .. 
+    // @widgets.Action('logout') :: 
+     @Div(`
+      <div class="dropdown">
+        <input class="dropdown-state" type="checkbox" id="unique-id">
+        <label class="dropdown-label" for="unique-id"></label>
+        <ul class="dropdown-menu">
+          <li><a href="#" class="dropdown-menu-item">Sign out</a></li>
+        </ul>
+      </div>`) ..
      @Class('menubar-menu-session-avatar') .. 
      @Style("background-image: url(#{(@env('Session') .. @current).user.avatar})")
   ) {
