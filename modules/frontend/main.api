@@ -72,7 +72,7 @@ exports.Session = function(origin, credentials) {
        @summary Perform Google OAuth authorization to photos API (e.g. in case permissions were revoked - see [::Session::Authorized])
     */ 
     authorizeGoogle: function(redirect) {
-      var rv = google_oauth_session.promptUserAuthorization(google_scopes, redirect, origin);
+      var rv = google_oauth_session.promptUserAuthorization(['https://picasaweb.google.com/data/'], redirect, origin);
       return !!rv;
     },
 

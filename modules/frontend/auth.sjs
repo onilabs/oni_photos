@@ -111,7 +111,7 @@ function doUserLogout() {
 
 
 //----------------------------------------------------------------------
-
+// authenticate the user with google:
 function authenticateGoogle(session) {
   
   @mainContent .. @appendContent(    
@@ -124,15 +124,23 @@ function authenticateGoogle(session) {
       |[command, param]|
       if (command === 'authenticate') {
 
-        @backfill.withPopupWindow {
-          |redirect|
-          if (session.authorizeGoogle(redirect))
-            return; // successfully authorized
-        }
-        
+        if (session .. authorizeGoogle())
+          return true;
       }
     }
-    
   }
 }
 exports.authenticateGoogle = authenticateGoogle;
+
+//----------------------------------------------------------------------
+// authorize will google scopes:
+function authorizeGoogle(session) {
+
+  @backfill.withPopupWindow {
+    |redirect|
+    if (session.authorizeGoogle(redirect))
+      return true;
+    return false;
+  }
+}
+exports.authorizeGoogle = authorizeGoogle;

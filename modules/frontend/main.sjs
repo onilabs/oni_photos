@@ -3,7 +3,7 @@
 */
 
 require('/hubs');
-
+console.log('xxx');
 @ = require([
   'mho:std',
   'mho:app',
@@ -17,6 +17,7 @@ require('/hubs');
   {id:'./navigation', name: 'navigation'}
 
 ]);
+console.log('yyy');
 
 //----------------------------------------------------------------------
 

@@ -266,20 +266,28 @@ function StoryEditPalette(session, Selection) {
     { 
       type: 'img',
       title: 'Photos',
-      content: HorizontalPhotoStream(session) ..
-                 @Mechanism(function() {
-                   @backfill.cmd.stream(['click-photo']) .. @each {
-                     |[cmd,url]|
-                     var selection = Selection .. @current();
-                     if (selection) {
-                       selection.classList.add('block-changed');
-                       selection.addEventListener('animationend', function() {
-                         selection.classList.remove('block-changed');
-                       });
-                       (selection .. @field.Value()).set({type:'img', url:url});
-                     }
-                   }
-                 })
+      content: session.Authorized .. 
+                @transform(authorized -> authorized ?
+                           HorizontalPhotoStream(session) ..
+                           @Mechanism(function() {
+                             @backfill.cmd.stream(['click-photo']) .. @each {
+                               |[cmd,url]|
+                               var selection = Selection .. @current();
+                               if (selection) {
+                                 selection.classList.add('block-changed');
+                                 selection.addEventListener('animationend', function() {
+                                   selection.classList.remove('block-changed');
+                                 });
+                                 (selection .. @field.Value()).set({type:'img', url:url});
+                               }
+                             }
+                           }) :
+                           @Div .. @Style('text-align:center') ::
+                             @Button('Authorize Google Photo Access') .. 
+                               @Class('menubar-button') ..
+                               @Style('margin:30px') ..
+                               @OnClick(->require('./auth').authorizeGoogle(session))
+                          )
     },
     { 
       type: 'txt',
