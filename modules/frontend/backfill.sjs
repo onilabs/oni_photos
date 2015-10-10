@@ -216,9 +216,9 @@ exports.tailspawn = tailspawn;
 
 //----------------------------------------------------------------------
 
-function PlainTextEditor() {
+function PlainTextEditable(elem) {
   // XXX plaintext-only is webkit only
-  return @Div() .. 
+  return elem .. 
     @Attrib('contenteditable', 'plaintext-only') ..
     @Mechanism(function(node) {
       var current_val;
@@ -247,7 +247,5 @@ function PlainTextEditor() {
         }
       }
     });
-    
-
 }
-exports.PlainTextEditor = PlainTextEditor;
+exports.PlainTextEditable = PlainTextEditable;

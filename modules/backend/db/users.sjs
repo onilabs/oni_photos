@@ -114,7 +114,7 @@ function Stories(user_id) {
       var story_data = require('./stories').getPublicStory(key);
       return {
         id: key,
-        title: 'Black Widow Pt.2',
+        title: story_data.title,
         // XXX the trycatch is just because i have some broken data in my db
         thumbnail: @fn.trycatch(@data.titleThumb, -> null)(story_data)
       }

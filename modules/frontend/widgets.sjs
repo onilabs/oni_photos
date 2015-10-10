@@ -117,7 +117,6 @@ exports.HorizontalPhotoStream = HorizontalPhotoStream;
 /**
    @function StoryEditWidget
    @summary XXX write me
-   @param {sjs:observable::Observable} [story_content]
 */
 
 
@@ -130,7 +129,7 @@ BlockContentConstructors['txt'] = descriptor ->
                                          // xxx the span is a hack to keep the 'type' value
                                          @Span() .. @field.Field('type'),
                                          @field.Field('content') ::
-                                           @backfill.PlainTextEditor() ..
+                                           @Div .. @backfill.PlainTextEditable() ..
                                            @Style('height:100%')
                                        ];
 // override 'img' block to take image from Value:
@@ -143,7 +142,7 @@ BlockContentConstructors['img'] =
     .. @Attrib('data-height', 800);
 
 
-function StoryEditWidget(StoryContent, Selection) {
+function StoryEditWidget(Selection) {
 
   var SelectionMechanism = @Mechanism(function(node) {
     @backfill.cmd.stream(['select-block']) .. @each {
@@ -233,7 +232,10 @@ function StoryEditWidget(StoryContent, Selection) {
         <span class="story-author-name">Farah Chan</span>
       </div>
       <h1 class="story-title">
-        <span class="story-title-content" contentEditable="true">That time we went to the India</span>
+        ${
+            @field.Field('title') ::
+              @Span() .. @Class("story-title-content") .. @backfill.PlainTextEditable()
+         }
       </h1>
     </div>
     ${

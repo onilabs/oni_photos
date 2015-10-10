@@ -57,7 +57,7 @@ function do_edit_story(story_id) {
         @Div() .. EditorCSS ::
           [ 
             @Div() .. @Class('body') ::
-              @widgets.StoryEditWidget(Story, Selection),
+              @widgets.StoryEditWidget(Selection),
             @Div() .. @Class('toolbox') ::
               @widgets.StoryEditPalette(session, Selection)
           ]
@@ -86,7 +86,6 @@ function do_edit_story(story_id) {
       // XXX need to fix synchronization for real
       hold(2000);
       if (!@eq(upstream, Story .. @current)) {
-        console.log('setting from upstream');
         Story.set(upstream);
       }
     }

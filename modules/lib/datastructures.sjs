@@ -11,12 +11,14 @@
 //----------------------------------------------------------------------
 /*
 
-  STORY_DATA = { content: [ ROW* ] }
+  STORY_DATA = { title: STRING, content: [ ROW* ] }
   ROW        = [ BLOCK, BLOCK, BLOCK ]
   BLOCK      = { type: TYPE, ... other fields depending on type }
   TYPE       = 'blank' | 'img' | 'txt' 
 
 */
+
+var emptyStory = -> { title: 'Untitled story', content: [] };
 
 var isRowEmpty = row -> row .. @all(block -> block.type=='blank');
 exports.isRowEmpty = isRowEmpty;

@@ -101,5 +101,5 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
 var IndexPage = -> Document("['index']") :: @static.index();
 
 var StoryPage = story_id -> Document("['story','#{story_id}']") :: 
-  @static.publishedStory(@stories.getPublicStory(story_id).content);
+  @static.publishedStory(@stories.getPublicStory(story_id));
 

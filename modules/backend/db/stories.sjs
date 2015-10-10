@@ -19,18 +19,14 @@
   'mho:std',
   {id:'mho:flux/kv', name:'kv'},
   {id:'mho:server/random', name:'random'},
-  {id:'./users', name:'users'}
+  {id:'./users', name:'users'},
+  {id:'lib:datastructures', name: 'data'}
 ]);
 
 // XXX could cache value
 var STORIES = transaction -> (transaction||@env('services').db) .. @kv.Subspace('stories');
 
 //----------------------------------------------------------------------
-
-var blank_story = {
-  content: []
-};
-
 
 /**
    @function createStory
@@ -46,7 +42,7 @@ function createStory(user_id) {
     |T|
     if (!@users.findAccount(user_id, T))
       throw new Error("Unknown user '#{user_id}'");
-    STORIES(T) .. @kv.set([story_id, 'data'], blank_story);
+    STORIES(T) .. @kv.set([story_id, 'data'], @data.emptyStory());
     STORIES(T) .. @kv.set([story_id, 'owner'], user_id);
     @users.USERS(T) .. @kv.set([user_id, 'stories_index', story_id], true);
   }

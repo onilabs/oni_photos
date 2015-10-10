@@ -86,7 +86,7 @@ function do_show_story(url,story_id) {
   // XXX we could make this 'live'
   var story = @env('api').getPublicStory(story_id);
   @mainContent .. @replaceContent(
-    require('lib:static_html').publishedStory(story.content)
+    require('lib:static_html').publishedStory(story)
   ) {
     ||
 
