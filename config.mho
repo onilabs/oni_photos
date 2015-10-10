@@ -83,7 +83,7 @@ exports.serve = function(args) {
     
     @server.run([
       {
-        address: @Port(6060),
+        address: @Port(args.devel ? 6060 : 80),
         routes: routes
       }
     ]) {
