@@ -10,9 +10,12 @@ exports.content = function(param) {
   
   var CSS = "\
 
-  @import url(https://fonts.googleapis.com/css?family=Roboto:700,500,400);
+  @import url(https://fonts.googleapis.com/css?family=Roboto:900,700,500,400);
   * {
     box-sizing: border-box;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    -webkit-text-size-adjust: none;
   }
   html {
     height: 100%;
@@ -105,7 +108,7 @@ exports.content = function(param) {
   .menubar-button:hover {
     border-color: #e0e0e1;
   }
-  .project-wrapper {
+  .projects-wrapper {
     margin-top: 40px;
   }
   .story-header {
@@ -113,11 +116,17 @@ exports.content = function(param) {
     margin: 100px 0 100px 0;
     text-align: center;
   }
-  .story-title {
+  .story-title,
+  .projects-title {
+    color: #4E2D2D;
     font-size: 36px;
-    font-weight: 700;
+    font-weight: 900;
     margin-top: 50px;
     position: relative;
+    text-align: center;
+  }
+  .projects-title {
+    margin-bottom: 40px;
   }
   .story-title-content {
     outline: none;
@@ -139,7 +148,7 @@ exports.content = function(param) {
   .story-author {
     margin-top: 10px;
     font-size: 16px;
-    font-weight: 400;
+    font-weight: 500;
     color: #7E53A3;
   }
   .story-author-face {

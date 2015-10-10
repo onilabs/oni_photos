@@ -61,7 +61,7 @@ function do_index_with_session(session) {
                    `
           }
           else
-            return @Div(arr) .. @Class('project-wrapper');
+            return @Div([`<div class="projects-title">Your stories</div>`, arr]) .. @Class('projects-wrapper');
         })
       ]
   ) {
