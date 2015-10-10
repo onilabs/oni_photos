@@ -167,8 +167,7 @@ exports.content = function(param) {
     font-size: 16px;
     font-weight: 600;
     color: #ccc;
-    margin: 100px auto 100px auto;
-    width: 400px;
+    padding: 50px 0;
     text-align: center;
   }
   .story-footer-connect {
