@@ -19,6 +19,7 @@
 */
 
 var emptyStory = -> { title: 'Untitled story', content: [] };
+exports.emptyStory = emptyStory;
 
 var isRowEmpty = row -> row .. @all(block -> block.type=='blank');
 exports.isRowEmpty = isRowEmpty;
