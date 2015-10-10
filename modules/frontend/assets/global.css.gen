@@ -69,7 +69,7 @@ exports.content = function(param) {
       0px 0px 2px 0px rgba(0,0,0,0.15),
       0px 6px 7px 0px rgba(0,0,0,0.15);
     border-radius: 3px;
-    padding: 0;
+    padding: 5px 0;
     margin: 0;
     background-color: #fff;
     list-style-type: none;
@@ -101,8 +101,7 @@ exports.content = function(param) {
     justify-content: space-between;
     background: #fff;
     padding: 10px;
-    border-bottom: 1px solid #DBDBDB;
-    box-shadow: 0px 1px 3px 0px rgba(78,45,45,0.10);
+    box-shadow: 0px 1px 3px 0px rgba(78,45,45,0.12);
   }
   .menubar-logo {
     width: 142px;

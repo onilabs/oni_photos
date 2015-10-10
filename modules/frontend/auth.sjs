@@ -99,6 +99,7 @@ function doUserLogout() {
         <input class="dropdown-state" type="checkbox" id="unique-id">
         <label class="dropdown-label" for="unique-id"></label>
         <ul class="dropdown-menu">
+          <li><a href="#" class="dropdown-menu-item">Stories</a></li>
           <li><a href="#" class="dropdown-menu-item">Sign out</a></li>
         </ul>
       </div>`) ..
