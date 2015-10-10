@@ -67,7 +67,7 @@ exports.index = -> `
   `;
 
 
-exports.publishedStory = function(story_data) {
+exports.publishedStory = function(story) {
 
   function StoryRow(descriptor) {
     var rv;
@@ -79,14 +79,14 @@ exports.publishedStory = function(story_data) {
       `
       <div class="story-header">
         <div class="story-author">
-          <span class="story-author-face"><img src="https://pbs.twimg.com/profile_images/606752573341601792/NNL4kd5v.jpg"/></span>
-          <span class="story-author-name">Farah Chan</span>
+          <span class="story-author-face"><img src="${story.owner_avatar}"/></span>
+          <span class="story-author-name">${story.owner_name}</span>
         </div>
-        <h1 class="story-title">${story_data.title}</h1>
+        <h1 class="story-title">${story.data.title}</h1>
       </div>
       <div class="story-content">
       ${
-        story_data.content .. @map(StoryRow)
+        story.data.content .. @map(StoryRow)
       }
       </div>
       <div class="story-footer">

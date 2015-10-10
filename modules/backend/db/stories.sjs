@@ -70,8 +70,16 @@ exports.Data = Data;
 */
 function getPublicStory(story_id) {
   // XXX verify that the story is public
-  return STORIES() ..
+  var story = STORIES() ..
     @kv.get([story_id, 'data']);
+  var owner = STORIES() ..
+    @kv.get([story_id, 'owner']);
+  var owner_account = @users.findAccount(owner);
+  return {
+    owner_name: owner_account.name,
+    owner_avatar: owner_account.avatar,
+    data: story
+  };
 }
 exports.getPublicStory = getPublicStory;
 

@@ -131,7 +131,8 @@ function Stories(user_id) {
     @kv.Subspace([user_id, 'stories_index']) ..
     @kv.observeQuery(@kv.RANGE_ALL) ..
     @transform(kvs -> kvs .. @project(function([key,val]) {
-      var story_data = require('./stories').getPublicStory(key);
+      //XXX getPublicStory does too much; we want '@stories.data'
+      var story_data = require('./stories').getPublicStory(key).data;
       return {
         id: key,
         title: story_data.title,

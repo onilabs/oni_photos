@@ -228,8 +228,8 @@ function StoryEditWidget(Selection) {
     `
     <div class="story-header">
       <div class="story-author">
-        <span class="story-author-face"><img src="https://pbs.twimg.com/profile_images/606752573341601792/NNL4kd5v.jpg"/></span>
-        <span class="story-author-name">Farah Chan</span>
+        <span class="story-author-face">${@Img()..@Attrib("src",(@env("Session") .. @current).user.avatar)}</span>
+        <span class="story-author-name">${(@env("Session") .. @current).user.name}</span>
       </div>
       <h1 class="story-title">
         ${
