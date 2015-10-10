@@ -47,13 +47,9 @@ exports.content = function(param) {
   .intro {
     max-width: 500px;
     padding: 0 30px;
-    margin: 80px auto;
+    margin: 0 auto;
     text-align: center;
     font-size: 22px;
-  }
-  .intro h2 {
-    font-weight: 400;
-    color: #7E53A3;
   }
   .intro p {
     color: #{colorText};
@@ -117,7 +113,8 @@ exports.content = function(param) {
     text-align: center;
   }
   .story-title,
-  .projects-title {
+  .projects-title,
+  .intro-title {
     color: #4E2D2D;
     font-size: 36px;
     font-weight: 900;

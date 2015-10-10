@@ -57,7 +57,7 @@ exports.StoryBlock = StoryBlock;
 
 exports.index = -> `
   <div class="intro">
-    <h2>What’s this all about?</h2>
+    <h2 class="intro-title">What’s this all about?</h2>
     <p>
     Our goal is to make it really easy for <span style="white-space:nowrap">friends &amp; family</span>
     to create collections of pictures together.
