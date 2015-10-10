@@ -187,6 +187,10 @@ exports.content = function(param) {
     color: #fff;
     font-weight: 700;
     font-size: 18px;
+    padding-top: 10px;
+    text-shadow:
+      0 1px 3px rgba(0,0,0,.7),
+      0 1px 30px rgba(0,0,0,.5);
   }
   .story-block:hover  {
     transition: -webkit-filter 200ms ease;
