@@ -69,6 +69,21 @@ function createAccount(record, credentials) {
 exports.createAccount = createAccount;
 
 /**
+   @function updateCredentials
+   @summary Update a users service credentials
+*/
+function updateCredentials(user_id, credentials) {
+  USERS() .. @kv.Subspace([user_id,'credentials']) .. @kv.withTransaction {
+    |T|
+    credentials .. @propertyPairs .. @each {
+      |[key, val]|
+      T .. @kv.set(key, val);
+    }
+  }
+}
+exports.updateCredentials = updateCredentials;
+
+/**
    @function modifyAccount
    @summary Modify an existing account
    @param {Object} [record] 

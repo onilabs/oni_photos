@@ -57,12 +57,20 @@ exports.login = function(origin, redirect) {
           google_tokens: google_tokens
         });
     }
-    else if (!account.name) {
-      // XXX this is just to patch up our existing db with missing data
-      var user_info = getUserInfo(google_tokens);
-      account.name = user_info.name;
-      account.avatar = user_info.picture;
-      @users.modifyAccount(account);
+    else {
+      @users.updateCredentials(
+        id_token.email,
+        {
+          google_tokens: google_tokens
+        });
+
+      if (!account.name) {
+        // XXX this is just to patch up our existing db with missing data
+        var user_info = getUserInfo(google_tokens);
+        account.name = user_info.name;
+        account.avatar = user_info.picture;
+        @users.modifyAccount(account);
+      }
     }
   }
   catch (e) {
