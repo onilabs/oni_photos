@@ -80,7 +80,6 @@ exports.content = function(param) {
   .menubar-menu-session-avatar {
     height: 32px;
     width: 32px;
-    background-image: url(https://cdn-images-1.medium.com/fit/c/80/80/0*Uz4JNcuuzsztGpxg.jpeg);
     background-size: cover;
     border-radius: 100%;
   }

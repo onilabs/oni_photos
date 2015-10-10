@@ -9,7 +9,7 @@
   {id:'./backfill', name:'backfill'}
 ]);
 
-var CREDENTIALS_KEY = 'oni_photos_creds';
+var CREDENTIALS_KEY = 'oni_photos_creds2';
 
 //----------------------------------------------------------------------
 
@@ -59,7 +59,7 @@ function doUserLogin() {
     }
   }
 
-  // if we're here, the user needs to log explicitly
+  // if we're here, the user needs to log in explicitly
   @sessionMenu .. @replaceContent(
     @widgets.Action('google_login') :: `<div class="menubar-button">Log in with Google</div>`
   ) {
@@ -93,7 +93,10 @@ function doUserLogin() {
 
 function doUserLogout() {
  @sessionMenu .. @replaceContent(
-    @widgets.Action('logout') :: @Div() .. @Class('menubar-menu-session-avatar')
+    @widgets.Action('logout') :: 
+     @Div() .. 
+     @Class('menubar-menu-session-avatar') .. 
+     @Style("background-image: url(#{(@env('Session') .. @current).user.avatar})")
   ) {
     ||
     @backfill.cmd.stream(['logout']) .. @each {

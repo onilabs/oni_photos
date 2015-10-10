@@ -55,14 +55,14 @@ exports.Session = function(origin, credentials) {
   }  
   
   var google_oauth_session = @env('services').google_api_oauth.APISession(
-    user .. @users.getCredentials('google_tokens')
+    user.id .. @users.getCredentials('google_tokens')
   );
 
 
   return {
     /**
        @variable user
-       @summary Username of authenticated user
+       @summary User id / name / avatar of authenticated user
     */
     user: user,
 
@@ -93,20 +93,20 @@ exports.Session = function(origin, credentials) {
        @function Session.createStory
        @summary Create a new story owned by the session user
     */
-    createStory: -> user .. @stories.createStory(),
+    createStory: -> user.id .. @stories.createStory(),
 
     /**
        @function Session.Stories
        @summary Return an [sjs:observable::Observable] yielding a [sjs:sequence::Stream] of the ids of all stories of the session user
     */
-    Stories: -> user .. @users.Stories(),
+    Stories: -> user.id .. @users.Stories(),
 
     /**
        @function Session.StoryData
        @param {String} [story_id]
        @summary Return an [sjs:observable::Observable] yielding the data for the given story
     */ 
-    StoryData: story_id -> story_id .. @stories.Data(user),
+    StoryData: story_id -> story_id .. @stories.Data(user.id),
 
     /**
        @function Session.modifyStory
@@ -114,7 +114,7 @@ exports.Session = function(origin, credentials) {
        @param {Object} [data]
        @summary Save the given data as the new story data
     */
-    modifyStory: (story_id, data) -> story_id .. @stories.modifyStory(data, user)
+    modifyStory: (story_id, data) -> story_id .. @stories.modifyStory(data, user.id)
     
   };
 };

@@ -6,8 +6,10 @@
      All in global subspace 'users':
 
          [USER_ID, 'account'] = { id: USER_ID,
-                                token: string
-                              }
+                                  access_token: string,
+                                  name: string,
+                                  avatar: string (url)
+                                }
 
          [USER_ID, 'credentials'] : service credentials (google, etc) subspace
 
@@ -42,7 +44,8 @@ exports.findAccount = findAccount;
 /**
    @function createAccount
    @summary Create a new account; throw if account already exists
-   @param {Object} [record] { id, access_token } object
+   @param {Object} [record] { id, access_token, ... } object
+   @param {Object} [credentials] Keyed object with credentials records
 */
 function createAccount(record, credentials) {
   if (!record.id || !record.access_token)
@@ -66,6 +69,23 @@ function createAccount(record, credentials) {
 exports.createAccount = createAccount;
 
 /**
+   @function modifyAccount
+   @summary Modify an existing account
+   @param {Object} [record] 
+*/
+function modifyAccount(record) {
+  if (!record.id) 
+    throw new Error("invalid record format");
+  
+  USERS() .. @kv.Subspace([record.id]) .. @kv.withTransaction {
+    |T|
+    T .. @kv.get(['account']); // throws if account doesn't exist
+    T .. @kv.set(['account'], record);
+  }
+}
+exports.modifyAccount = modifyAccount;
+
+/**
    @function verifyAccount
    @summary Check that an account with the given credentials exists
    @param {String} [credentials]
@@ -81,7 +101,7 @@ function verifyAccount(credentials) {
     if (record.access_token !== creds.access_token)
       throw new Error("invalid credentials");
     else
-      return creds.id;
+      return {id: record.id, name: record.name, avatar: record.avatar};
   }
   catch (e) {
     console.log("verifyAccount: #{e}");

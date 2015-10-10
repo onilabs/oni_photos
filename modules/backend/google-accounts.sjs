@@ -43,22 +43,46 @@ exports.login = function(origin, redirect) {
 
     if (!account) {
       // nope -> let's create one with a random access token
-      account = @users.createAccount({id: id_token.email,
-                                      access_token: @random.createID()
-                                     },
-                                     {
-                                       google_tokens: google_tokens
-                                     });
+
+      var user_info = getUserInfo(google_tokens);
+
+      account = @users.createAccount(
+        {
+          id: id_token.email,
+          access_token: @random.createID(),
+          name:  user_info.name,
+          avatar: user_info.picture
+        },
+        {
+          google_tokens: google_tokens
+        });
+    }
+    else if (!account.name) {
+      // XXX this is just to patch up our existing db with missing data
+      var user_info = getUserInfo(google_tokens);
+      account.name = user_info.name;
+      account.avatar = user_info.picture;
+      @users.modifyAccount(account);
     }
   }
   catch (e) {
     console.log("Error in finding/creating account (#{e})");
     return false;
   }
-  
+
   return { id:    account.id,
            access_token: account.access_token
          } .. JSON.stringify;
   
 };
 
+function getUserInfo(google_tokens) {
+  // see https://developers.google.com/+/web/api/rest/openidconnect/getOpenIdConnect
+  return @http.request("https://www.googleapis.com/oauth2/v3/userinfo",
+                       {
+                         headers: {
+                           'Authorization': 'Bearer '+google_tokens.access_token 
+                         }
+                       }) .. JSON.parse;
+  
+}
