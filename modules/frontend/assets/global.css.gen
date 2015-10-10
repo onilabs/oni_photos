@@ -204,12 +204,37 @@ exports.content = function(param) {
   .story-author-face img {
     width: 100%;
   }
-  .story-footer {
+  .story-uploader {
+    padding: 5px;
+    display: block;
+    cursor: pointer;
+
+    background-image: url(/frontend/assets/upload-file.svg);
+    background-size: 50px;
+    background-repeat: no-repeat;
+    background-position: 5px 16px;
+    padding-left: 65px;
+  }
+  .story-uploader-title {
+    color: #7E53A3;
+    font-weight: 700;
     font-size: 16px;
-    font-weight: 600;
-    color: #ccc;
+  }
+  .story-footer {
+    font-size: 14px;
+    font-weight: 400;
+    color: #{colorText};
     padding: 50px 0;
-    text-align: center;
+  }
+  .story-footer input {
+    margin-top: 20px;
+    outline: 0;
+    font-size: 14px;
+    color: #{colorText};
+    font-family: 'Roboto', sans-serif;
+  }
+  .story-footer p {
+    margin: 5px;
   }
   .story-footer-connect {
     width: 110px;
