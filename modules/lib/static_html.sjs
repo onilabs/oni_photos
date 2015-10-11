@@ -83,6 +83,7 @@ exports.publishedStory = function(story) {
           <span class="story-author-name">${story.owner_name}</span>
         </div>
         <h1 class="story-title">${story.data.title}</h1>
+        <div class="story-sharing">Private story</div>
       </div>
       <div class="story-content">
       ${
@@ -91,8 +92,8 @@ exports.publishedStory = function(story) {
       </div>
       <div class="story-footer">
         <label class="story-uploader">
-          <p class="story-uploader-title">Upload photos to this story<p>
-          <p>Only ${story.owner_name} will see the uploaded pictures and can add them to this story.</p>
+          <div class="story-uploader-title">Upload photos to this story</div>
+          <p>Only ${story.owner_name} will see the uploaded photos. to this story.</p>
           <input type="file" accept="image/*" capture="camera" multiple>
         </label>
       </div>
