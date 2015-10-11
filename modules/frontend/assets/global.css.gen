@@ -99,9 +99,13 @@ exports.content = function(param) {
   }
 
   .menubar {
+    display: -webkit-flex;
     display: flex;
+    -webkit-flex-direction: row;
     flex-direction: row;
+    -webkit-flex-wrap: nowrap;
     flex-wrap: nowrap;
+    -webkit-justify-content: space-between;
     justify-content: space-between;
     background: #fff;
     padding: 10px;
@@ -119,7 +123,7 @@ exports.content = function(param) {
   }
   .menubar-menu > * {
     display: inline-block;
-    float: left; /*flex?*/
+    float: left;
   }
   .menubar-menu-session-avatar {
     height: 32px;
@@ -276,9 +280,12 @@ exports.content = function(param) {
   .project-title {
     position: absolute;
     top: 0; right: 0; bottom: 0; left: 0;
+    -webkit-justify-content: center;
+    -webkit-box-align: center;
+    -webkit-align-items: center;
+    display: -webkit-flex;
     display: flex;
     justify-content: center;
-    -webkit-box-align: center;
     align-items: center;
     color: #fff;
     font-weight: 700;
