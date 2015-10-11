@@ -93,7 +93,7 @@ exports.publishedStory = function(story) {
       <div class="story-footer">
         <label class="story-uploader">
           <div class="story-uploader-title">Upload photos to this story</div>
-          <p>Only ${story.owner_name} will see the uploaded photos. to this story.</p>
+          <p>Only ${story.owner_name} will see your uploads and will be able to add your photos to this story.</p>
           <input type="file" accept="image/*" capture="camera" multiple>
         </label>
       </div>
