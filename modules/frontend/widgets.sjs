@@ -245,9 +245,7 @@ function StoryEditWidget(Selection) {
       @field.FieldArray(row_template) ..
       CompromisedRowMechanism  
     }
-    <div class="story-footer">
-      The End
-    </div>
+    <div class="story-footer"></div>
   `;
 }
 exports.StoryEditWidget = StoryEditWidget;
