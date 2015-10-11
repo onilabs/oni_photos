@@ -321,6 +321,14 @@ exports.content = function(param) {
     background-color: #f4f4f5;
     background-image: url(/frontend/assets/add-image.svg);
   }
+  /* XXX gross hack cause we always add empty block to the end */
+   .main-content:not(.is-editing) .story-block:nth-last-child(1) .story-blank
+  ,.main-content:not(.is-editing) .story-block:nth-last-child(2) .story-blank
+  ,.main-content:not(.is-editing) .story-block:nth-last-child(3) .story-blank
+  {
+    display: none;
+  }
+
   .story-image,
   .project-image {
     display: block;
