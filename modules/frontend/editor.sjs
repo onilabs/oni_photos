@@ -51,6 +51,7 @@ function do_edit_story(story_id) {
     }
   ");
   
+  @mainContent.classList.add('is-editing');
   @mainContent .. @replaceContent(
     @field.Field({Value:Story}) ..
       @field.FieldMap() ::
@@ -77,7 +78,9 @@ function do_edit_story(story_id) {
         hold();
       }
     }
-
+    finally {
+      @mainContent.classList.remove('is-editing');
+    }
   }
 
   function synchronize_from_upstream() {
