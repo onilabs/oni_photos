@@ -58,17 +58,7 @@ exports.content = function(param) {
     color: #{colorText};
   }
 
-  .dropdown-label {
-    position: absolute;
-    top: 0; right: 0; bottom: 0; left: 0;
-    cursor: pointer;
-  }
   .dropdown-menu {
-    display: none;
-    position: absolute;
-    top: 32px;
-    right: 0;
-
     box-shadow:
       0px 0px 2px 0px rgba(0,0,0,0.15),
       0px 6px 7px 0px rgba(0,0,0,0.15);
@@ -80,7 +70,7 @@ exports.content = function(param) {
     min-width: 170px;
     overflow: hidden;
   }
-  .dropdown-menu-item {
+  .dropdown-menu > li > a {
     display: block;
     text-decoration: none;
     font-weight: 500;
@@ -88,14 +78,9 @@ exports.content = function(param) {
     color: #445;
     padding: 12px 20px;
   }
-  .dropdown-menu-item:hover {
+
+  .dropdown-menu > li > a:hover {
     background: #fafafa;
-  }
-  .dropdown-state {
-    display: none;
-  }
-  .dropdown-state:checked ~ .dropdown-menu {
-      display: block
   }
 
   .menubar {

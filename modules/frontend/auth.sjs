@@ -91,29 +91,23 @@ function doUserLogin() {
   }
 }
 
+function logout() {
+  delete localStorage[CREDENTIALS_KEY];
+  throw new Error('logout'); // this will effectively restart the app
+}
+
 function doUserLogout() {
  @sessionMenu .. @replaceContent(
-    // @widgets.Action('logout') :: 
-     @Div(`
-      <div class="dropdown">
-        <input class="dropdown-state" type="checkbox" id="unique-id">
-        <label class="dropdown-label" for="unique-id"></label>
-        <ul class="dropdown-menu">
-          <li><a href="#" class="dropdown-menu-item">Stories</a></li>
-          <li><a href="#" class="dropdown-menu-item">Sign out</a></li>
-        </ul>
-      </div>`) ..
-     @Class('menubar-menu-session-avatar') .. 
-     @Style("background-image: url(#{(@env('Session') .. @current).user.avatar})")
+     @Div() ..
+       @Class('menubar-menu-session-avatar') .. 
+       @Style("background-image: url(#{(@env('Session') .. @current).user.avatar})") ..
+       @backfill.DropdownMenu([
+         @A('Stories') .. @Attrib('href', '/'),
+         @A('Sign out') .. @Attrib('href', '#') .. @OnClick(logout)
+       ])
   ) {
-    ||
-    @backfill.cmd.stream(['logout']) .. @each {
-      |[command, param]|
-      if (command === 'logout') {
-        delete localStorage[CREDENTIALS_KEY];
-        throw new Error('logout'); // this will effectively restart the app
-      }
-    }
+   ||
+   hold();
   }
 }
 

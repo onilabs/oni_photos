@@ -249,3 +249,84 @@ function PlainTextEditable(elem) {
     });
 }
 exports.PlainTextEditable = PlainTextEditable;
+
+//----------------------------------------------------------------------
+
+var popover_CSS_x = {
+  'left':   @CSS('{position: absolute; z-index:1000; left:0;}'),
+  // XXX TODO 'center'
+  'right':  @CSS('{position: absolute; z-index:1000; right:0;}')
+};
+
+var popover_CSS_y = {
+  'top':    @CSS('{ bottom: 100%; }'),
+  'center': @CSS('{ top: 0%; }'),
+  'bottom': @CSS('{ top: 100%; }')
+};
+
+function popover(anchor, settings, element, block) {
+  settings = {
+    x: 'left',
+    y: 'center'
+  } .. @override(settings);
+
+  return anchor .. @appendContent(
+    element ..
+      popover_CSS_x[settings.x] ..
+      popover_CSS_y[settings.y],
+    block);
+}
+exports.popover = popover;
+
+//----------------------------------------------------------------------
+
+var DropdownAnchor_CSS = @CSS('
+  {
+    cursor: pointer;
+  }
+');
+
+function waitforClosingClick(elem) {
+  waitfor {
+    // we wait for clicks during the capture phase, and if they are
+    // outside of the menu, we close the menu:
+    window .. @events('!click') .. @each {
+      |ev|
+      var node = ev.target;
+      while (node) {
+        if (node === elem)
+          break;
+        node = node.parentNode;
+      }
+      if (!node) {
+        // click is not contained in elem
+        ev.stopPropagation();
+        ev.preventDefault();
+        return;
+      }
+    }
+  }
+  or {
+    // we wait for bubbling clicks (those that have not been stopped
+    // inside the dropdown) and close the menu for those too:
+    elem .. @wait('click');
+  }
+}
+
+function doDropdown(anchor, items) {
+  anchor .. popover(
+    {x:'right', y:'bottom'},
+    @Ul(items) .. @Class('dropdown-menu')
+  ) {
+    |dropdownDOMElement|
+    waitforClosingClick(dropdownDOMElement);
+    hold(0); // asynchronize, so that we don't act on propagating clicks again
+  }
+}
+
+function DropdownMenu(anchor, items) {
+  return anchor ..
+    DropdownAnchor_CSS ..
+    @OnClick(ev -> doDropdown(ev.currentTarget, items));
+}
+exports.DropdownMenu = DropdownMenu;

@@ -62,7 +62,7 @@ function do_index_with_session(session) {
                    `
           }
           else
-            return @Div([`<div class="projects-title">Your stories</div>`, arr]) .. @Class('projects-wrapper');
+            return @Div([@Div("Your stories") .. @Class('projects-title') .. @backfill.DropdownMenu(), arr]) .. @Class('projects-wrapper');
         })
       ]
   ) {
