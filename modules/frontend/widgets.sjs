@@ -366,3 +366,52 @@ function StoryEditPalette(session, Selection) {
 }
 exports.StoryEditPalette = StoryEditPalette;
 
+//----------------------------------------------------------------------
+
+function upload(ev) {
+  console.log(ev.currentTarget.files);
+  console.log(ev.currentTarget.value);
+  T = ev.currentTarget;
+  ev.currentTarget.files .. @each {
+    |file|
+    spawn doFileUpload(ev.currentTarget, file);
+  }
+}
+
+function doFileUpload(ui_parent, file) {
+
+  var UploadPercentage = @ObservableVar(0);
+  
+  ui_parent .. @insertAfter(
+    @Div() .. @Style('white-space:nowrap') ::
+      [
+        file.name,
+        `&nbsp`,
+        @B() ::
+          [
+            UploadPercentage,
+            `/100`
+          ],
+        @Button('X') .. @OnClick({|ev| ev.preventDefault(); return})
+      ]
+  ) {
+    ||
+    while (UploadPercentage .. @current < 100) {
+      hold(1000);
+      console.log('tick');
+      UploadPercentage.modify(p -> Math.floor(p+Math.random()*10))
+    }
+  }
+}
+
+function StoryUploader() {
+
+  return @Input() ..
+    @Style("display: none") ..
+    @Attrib('type','file') ..
+    @Attrib('accept', 'image/*') ..
+    @Attrib('multiple') ..
+    @On('change', upload);
+  
+}
+exports.StoryUploader = StoryUploader;
