@@ -86,8 +86,17 @@ function do_index_with_session(session) {
 function do_show_story(url,story_id) {
   // XXX we could make this 'live'
   var story = @env('api').getPublicStory(story_id);
-  @mainContent .. @replaceContent(
-    require('lib:static_html').publishedStory(story)
+  @mainContent .. @replaceContent([
+    require('lib:static_html').publishedStory(story),
+    `
+      <div class="story-footer">
+        <label class="story-uploader">
+          <div class="story-uploader-title">Upload photos to this story</div>
+          <p>Only ${story.owner_name} will see your uploads and will be able to add your photos to this story.</p>
+          <input type="file" accept="image/*" capture="camera" multiple>
+        </label>
+      </div>
+    `]
   ) {
     ||
 
