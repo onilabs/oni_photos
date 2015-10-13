@@ -34,10 +34,7 @@ exports.getPublicStory = function(story_id) {
    @summary XXX write me
 */
 exports.uploadToStory = function(story_id, meta, stream) {
-  stream .. @each {
-    |chunk|
-    console.log("#{meta.name}: #{chunk.length} bytes received");
-  }
+  return require('backend:upload').uploadToStory(story_id, meta, stream);
 };
 
 /**

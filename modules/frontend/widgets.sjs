@@ -374,6 +374,7 @@ function upload(input, upload_function) {
     |file|
     spawn doImageUpload(input, file, upload_function);
   }
+  input.value = '';
 }
 
 function doImageUpload(ui_parent, file, upload_function) {
