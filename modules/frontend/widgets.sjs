@@ -368,17 +368,15 @@ exports.StoryEditPalette = StoryEditPalette;
 
 //----------------------------------------------------------------------
 
-function upload(ev) {
-  console.log(ev.currentTarget.files);
-  console.log(ev.currentTarget.value);
-  T = ev.currentTarget;
-  ev.currentTarget.files .. @each {
+function upload(input, upload_function) {
+
+  input.files .. @each {
     |file|
-    spawn doImageUpload(ev.currentTarget, file);
+    spawn doImageUpload(input, file, upload_function);
   }
 }
 
-function doImageUpload(ui_parent, file) {
+function doImageUpload(ui_parent, file, upload_function) {
 
   var UploadPercentage = @ObservableVar(0);
   
@@ -396,24 +394,20 @@ function doImageUpload(ui_parent, file) {
       ]
   ) {
     ||
-    @backfill.VariableApertureStream(file .. @backfill.fileToArrayBuffer,
-                                     { progress_observer: p -> UploadPercentage.set(p) }) ..
-      @each {
-        |arraybuf|
-        hold(Math.floor(arraybuf.byteLength*(1/100 + 2/100*Math.random())));
-        console.log("received #{arraybuf.byteLength}");
-      }
+    upload_function({name: file.name},
+                    @backfill.VariableApertureStream(file .. @backfill.fileToArrayBuffer,
+                                                     { progress_observer: p -> UploadPercentage.set(p) }));
   }
 }
 
-function StoryUploader() {
+function StoryUploader(upload_function) {
 
   return @Input() ..
     @Style("display: none") ..
     @Attrib('type','file') ..
     @Attrib('accept', 'image/*') ..
     @Attrib('multiple') ..
-    @On('change', upload);
+    @On('change', ev -> upload(ev.currentTarget, upload_function));
   
 }
 exports.StoryUploader = StoryUploader;

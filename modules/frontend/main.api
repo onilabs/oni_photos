@@ -30,6 +30,17 @@ exports.getPublicStory = function(story_id) {
 };
 
 /**
+   @function uploadToStory
+   @summary XXX write me
+*/
+exports.uploadToStory = function(story_id, meta, stream) {
+  stream .. @each {
+    |chunk|
+    console.log("#{meta.name}: #{chunk.length} bytes received");
+  }
+};
+
+/**
    @function loginGoogle
    @summary Perform a Google OAuth authentication
    @param {String} [origin] Pass `window.location.origin` here
