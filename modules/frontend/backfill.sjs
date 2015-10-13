@@ -330,3 +330,21 @@ function DropdownMenu(anchor, items) {
     @OnClick(ev -> doDropdown(ev.currentTarget, items));
 }
 exports.DropdownMenu = DropdownMenu;
+
+//----------------------------------------------------------------------
+
+function fileToDataURL(file) {
+  var reader = new FileReader();
+
+  waitfor {
+    reader .. @wait('loadend');
+    return reader.result;
+  }
+  and {
+    reader.readAsDataURL(file);
+  }
+  retract {
+    reader.abort();
+  }
+}
+exports.fileToDataURL = fileToDataURL;

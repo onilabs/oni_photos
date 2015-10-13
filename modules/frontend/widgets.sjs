@@ -374,18 +374,18 @@ function upload(ev) {
   T = ev.currentTarget;
   ev.currentTarget.files .. @each {
     |file|
-    spawn doFileUpload(ev.currentTarget, file);
+    spawn doImageUpload(ev.currentTarget, file);
   }
 }
 
-function doFileUpload(ui_parent, file) {
+function doImageUpload(ui_parent, file) {
 
   var UploadPercentage = @ObservableVar(0);
   
   ui_parent .. @insertAfter(
     @Div() .. @Style('white-space:nowrap') ::
       [
-        file.name,
+        @Img() .. @Attrib('src', file .. @backfill.fileToDataURL) .. @Style('width:50px; height:50px'),
         `&nbsp`,
         @B() ::
           [
