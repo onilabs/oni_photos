@@ -34,6 +34,13 @@ exports.serve = function(args) {
     ]
   });
 
+  // make sure our uploads directory exists:
+  var upload_dir = require.url("./uploads") .. @url.toPath;
+  if (!@fs.isDirectory(upload_dir)) {
+    @fs.mkdir(upload_dir);
+  }
+  
+  
   @services.run() {
     |services|
 
@@ -43,7 +50,9 @@ exports.serve = function(args) {
       @route.SystemRoutes(),
       
       // hub definitions:
-      @route.CodeDirectory(/^(?=hubs\.sjs[^\/]*$)/, require.url("./modules/")), 
+      @route.CodeDirectory(/^(?=hubs\.sjs[^\/]*$)/, require.url("./modules/")),
+      // photo lib:
+      @route.StaticDirectory('uploads/', require.url("./uploads")),
       // common library:
       @route.CodeDirectory('lib/', require.url("./modules/lib/")),
       // frontend library:
