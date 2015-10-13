@@ -348,3 +348,49 @@ function fileToDataURL(file) {
   }
 }
 exports.fileToDataURL = fileToDataURL;
+
+function fileToArrayBuffer(file) {
+  var reader = new FileReader();
+
+  waitfor {
+    reader .. @wait('loadend');
+    return reader.result;
+  }
+  and {
+    reader.readAsArrayBuffer(file);
+  }
+  retract {
+    reader.abort();
+  }
+}
+exports.fileToArrayBuffer = fileToArrayBuffer;
+
+function VariableApertureStream(arrbuf, settings) {
+  settings = {
+    min_aperture: 50*1000, // 50kB
+    start_aperture: 100*1000, // 100kB
+    max_aperture: 5000*1000, // 5MB
+    feedback_interval: 2000, // feedback every 2s
+    progress_observer: undefined // progress observer
+  } .. @override(settings);
+  
+  var size = arrbuf.byteLength;
+
+  return @Stream ::
+    function(receiver) {
+      var aperture = settings.start_aperture;
+      var written = 0;
+      while (written < size) {
+        var start = new Date();
+        receiver(arrbuf.slice(written, Math.min(written+aperture, size)));
+        written += aperture;
+        aperture = Math.round(aperture*settings.feedback_interval / (new Date() - start));
+        if (aperture < settings.min_aperture) aperture = settings.min_aperture;
+        if (aperture > settings.max_aperture) aperture = settings.max_aperture;
+        if (settings.progress_observer) {
+          settings.progress_observer(written>size ? 100 : Math.floor(written/size*100));
+        }
+      }
+    };
+}
+exports.VariableApertureStream = VariableApertureStream;

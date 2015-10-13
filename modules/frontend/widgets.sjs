@@ -396,11 +396,13 @@ function doImageUpload(ui_parent, file) {
       ]
   ) {
     ||
-    while (UploadPercentage .. @current < 100) {
-      hold(1000);
-      console.log('tick');
-      UploadPercentage.modify(p -> Math.floor(p+Math.random()*10))
-    }
+    @backfill.VariableApertureStream(file .. @backfill.fileToArrayBuffer,
+                                     { progress_observer: p -> UploadPercentage.set(p) }) ..
+      @each {
+        |arraybuf|
+        hold(Math.floor(arraybuf.byteLength*(1/100 + 2/100*Math.random())));
+        console.log("received #{arraybuf.byteLength}");
+      }
   }
 }
 
