@@ -11,15 +11,8 @@ function uploadToStory(story_id, meta, stream) {
 
   var filename = @random.createID() + meta.name .. @path.extname;
 
-  // XXX stream to filename
-  
   var path = @env.configRoot() + 'uploads/' + filename;
 
-/*  stream .. @each {
-    |x|
-    console.log(typeof x);
-  }
-*/
   @fs.withWriteStream(path) {
     |dest|
     stream .. @stream.pump(dest);

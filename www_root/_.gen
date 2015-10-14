@@ -7,7 +7,7 @@
   'mho:surface/html',
   {id:'mho:server/response', name:'response'},
   {id:'lib:static_html', name:'static'},
-  {id:'backend:db/stories', name: 'stories'}
+  {id:'backend:db', name: 'db'}
 ]);
 
 // xxx helper that should go into surface
@@ -101,5 +101,5 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
 var IndexPage = -> Document("['index']") :: @static.index();
 
 var StoryPage = story_id -> Document("['story','#{story_id}']") :: 
-  @static.publishedStory(@stories.getPublicStory(story_id));
+  @static.publishedStory(@db.getPublicStory(story_id));
 

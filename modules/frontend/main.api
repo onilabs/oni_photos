@@ -10,8 +10,7 @@
   'mho:std',
   {id: 'lib:app-info', name: 'app_info'},
   {id: 'backend:google-photos', name: 'google_photos'},
-  {id: 'backend:db/users', name: 'users'},
-  {id: 'backend:db/stories', name: 'stories'},
+  {id: 'backend:db', name: 'db'},
   {id: 'backend:google-accounts', name: 'google_accounts'}
 ]);
 
@@ -26,7 +25,7 @@ exports.api_version = @app_info.version;
    @summary XXX write me
 */
 exports.getPublicStory = function(story_id) {
-  return @stories.getPublicStory(story_id);
+  return @db.getPublicStory(story_id);
 };
 
 /**
@@ -58,12 +57,12 @@ exports.loginGoogle = @google_accounts.login;
 exports.Session = function(origin, credentials) {
 
   var user;
-  if (!(user = @users.verifyAccount(credentials))) {
+  if (!(user = @db.verifyAccount(credentials))) {
     throw new Error("Account verification failed");
   }  
   
   var google_oauth_session = @env('services').google_api_oauth.APISession(
-    user.id .. @users.getCredentials('google_tokens')
+    user.id .. @db.getCredentials('google_tokens')
   );
 
 
@@ -83,7 +82,7 @@ exports.Session = function(origin, credentials) {
       var google_tokens = google_oauth_session.promptUserAuthorization(['https://picasaweb.google.com/data/'], redirect, origin);
       if (!google_tokens) return false;
 
-      @users.updateCredentials(user.id, { google_tokens: google_tokens });
+      @db.updateCredentials(user.id, { google_tokens: google_tokens });
 
       return true;
     },
@@ -105,20 +104,20 @@ exports.Session = function(origin, credentials) {
        @function Session.createStory
        @summary Create a new story owned by the session user
     */
-    createStory: -> user.id .. @stories.createStory(),
+    createStory: -> user.id .. @db.createStory(),
 
     /**
        @function Session.Stories
        @summary Return an [sjs:observable::Observable] yielding a [sjs:sequence::Stream] of the ids of all stories of the session user
     */
-    Stories: -> user.id .. @users.Stories(),
+    Stories: -> user.id .. @db.Stories(),
 
     /**
        @function Session.StoryData
        @param {String} [story_id]
        @summary Return an [sjs:observable::Observable] yielding the data for the given story
     */ 
-    StoryData: story_id -> story_id .. @stories.Data(user.id),
+    StoryData: story_id -> story_id .. @db.Data(user.id),
 
     /**
        @function Session.modifyStory
@@ -126,7 +125,7 @@ exports.Session = function(origin, credentials) {
        @param {Object} [data]
        @summary Save the given data as the new story data
     */
-    modifyStory: (story_id, data) -> story_id .. @stories.modifyStory(data, user.id)
+    modifyStory: (story_id, data) -> story_id .. @db.modifyStory(data, user.id)
     
   };
 };

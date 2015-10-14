@@ -4,7 +4,7 @@
 
 @ = require([
   'mho:std',
-  {id: 'backend:db/users', name: 'users'},
+  {id: 'backend:db', name: 'db'},
   {id: 'mho:server/random', name: 'random'}
 ]);
 
@@ -39,14 +39,14 @@ exports.login = function(origin, redirect) {
   // XXX the following two should be transactional!
   try {
     // ok, we've got an authenticated email. check if we've got an account for it already:
-    var account = @users.findAccount(id_token.email);
+    var account = @db.findAccount(id_token.email);
 
     if (!account) {
       // nope -> let's create one with a random access token
 
       var user_info = getUserInfo(google_tokens);
 
-      account = @users.createAccount(
+      account = @db.createAccount(
         {
           id: id_token.email,
           access_token: @random.createID(),
@@ -58,7 +58,7 @@ exports.login = function(origin, redirect) {
         });
     }
     else {
-      @users.updateCredentials(
+      @db.updateCredentials(
         id_token.email,
         {
           google_tokens: google_tokens
@@ -69,7 +69,7 @@ exports.login = function(origin, redirect) {
         var user_info = getUserInfo(google_tokens);
         account.name = user_info.name;
         account.avatar = user_info.picture;
-        @users.modifyAccount(account);
+        @db.modifyAccount(account);
       }
     }
   }

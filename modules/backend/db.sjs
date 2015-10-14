@@ -1,31 +1,123 @@
 /**
-   @summary User-related db access
-   @desc
-     ### Data Model
+   @summary Low-level DB access
+   desc
+     ### DATA MODEL
 
-     All in global subspace 'users':
+         STORIES
+         -------
 
-         [USER_ID, 'account'] = { id: USER_ID,
-                                  access_token: string,
-                                  name: string,
-                                  avatar: string (url)
-                                }
+         ['stories', STORY_ID, 'data'] = { 
+                                           ...
+                                         }
 
-         [USER_ID, 'credentials'] : service credentials (google, etc) subspace
+         ['stories', STORY_ID, 'owner'] = USER_ID
 
-         [USER_ID, 'stories_index', STORY_ID*] = true
+         ['stories', STORY_ID, 'editors_index', USER_ID*] = true
+
+         
+
+         USERS
+         -----
+
+         ['users', USER_ID, 'account'] = { id: USER_ID,
+                                           access_token: string,
+                                           name: string,
+                                           avatar: string (url)
+                                         }
+
+         ['users', USER_ID, 'credentials'] : service credentials (google, etc) subspace
+
+         ['users', USER_ID, 'stories_index', STORY_ID*] = true
+
 
 */
 
 @ = require([
   'mho:std',
   {id:'mho:flux/kv', name:'kv'},
-  {id:'lib:datastructures', name:'data'}
+  {id:'mho:server/random', name:'random'},
+  {id:'lib:datastructures', name: 'data'}
 ]);
 
-// XXX could cache value
+// XXX could cache values
+var STORIES = transaction -> (transaction||@env('services').db) .. @kv.Subspace('stories');
 var USERS = transaction -> (transaction||@env('services').db) .. @kv.Subspace('users');
-exports.USERS = USERS;
+
+
+//----------------------------------------------------------------------
+
+/**
+   @function createStory
+   @summary Create a new story owned by the given user
+   @param {String} [user_id]
+   @return {String} story id
+*/
+function createStory(user_id) {
+
+  var story_id = @random.createID();
+  
+  @env('services').db .. @kv.withTransaction {
+    |T|
+    if (!findAccount(user_id, T))
+      throw new Error("Unknown user '#{user_id}'");
+    STORIES(T) .. @kv.set([story_id, 'data'], @data.emptyStory());
+    STORIES(T) .. @kv.set([story_id, 'owner'], user_id);
+    USERS(T) .. @kv.set([user_id, 'stories_index', story_id], true);
+  }
+  return story_id;
+}
+exports.createStory = createStory;
+
+/**
+   @function Data
+   @summary XXX write me
+   @param {String} [story_id]
+   @param {String} [user_id]
+*/
+function Data(story_id, user_id) {
+  // XXX verify that the user is allowed to view
+  return STORIES() ..
+    @kv.observe([story_id, 'data']);
+}
+exports.Data = Data;
+
+/**
+   @function getPublicStory
+   @summary XXX write me
+   @param {String} [story_id]
+*/
+function getPublicStory(story_id) {
+  // XXX verify that the story is public
+  var story = STORIES() ..
+    @kv.get([story_id, 'data']);
+  var owner = STORIES() ..
+    @kv.get([story_id, 'owner']);
+  var owner_account = findAccount(owner);
+  return {
+    owner_name: owner_account.name,
+    owner_avatar: owner_account.avatar,
+    data: story
+  };
+}
+exports.getPublicStory = getPublicStory;
+
+/**
+   @function modifyStory
+   @summary XXX write me
+   @param {String} [story_id]
+   @param {Object} [data]
+   @param {String} [user_id]
+*/
+function modifyStory(story_id, data, user_id) {
+  @env('services').db .. @kv.withTransaction {
+    |T|
+    if (STORIES(T) .. @kv.get([story_id, 'owner']) !== user_id)
+      throw new Error("not authorized");
+    STORIES(T) ..
+      @kv.set([story_id, 'data'], data);
+  }
+}
+exports.modifyStory = modifyStory;
 
 //----------------------------------------------------------------------
 
@@ -147,7 +239,7 @@ function Stories(user_id) {
     @kv.observeQuery(@kv.RANGE_ALL) ..
     @transform(kvs -> kvs .. @project(function([key,val]) {
       //XXX getPublicStory does too much; we want '@stories.data'
-      var story_data = require('./stories').getPublicStory(key).data;
+      var story_data = getPublicStory(key).data;
       return {
         id: key,
         title: story_data.title,
