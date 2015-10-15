@@ -14,6 +14,8 @@
 
          ['stories', STORY_ID, 'editors_index', USER_ID*] = true
 
+         ['stories', STORY_ID, 'uploads_index', UPLOAD_ID*] = true 
+
          
 
          USERS
@@ -30,6 +32,16 @@
          ['users', USER_ID, 'stories_index', STORY_ID*] = true
 
 
+         UPLOADS
+         -------
+
+         ['uploads', UPLOAD_ID, 'meta' ] = { 
+                                             ...
+                                           }
+         
+         ['uploads', UPLOAD_ID, 'stories_index', STORY_ID*] = true
+                                             
+
 */
 
 @ = require([
@@ -39,10 +51,14 @@
   {id:'lib:datastructures', name: 'data'}
 ]);
 
-// XXX could cache values
+// XXX could these
 var STORIES = transaction -> (transaction||@env('services').db) .. @kv.Subspace('stories');
 var USERS = transaction -> (transaction||@env('services').db) .. @kv.Subspace('users');
+var UPLOADS = transaction -> (transaction||@env('services').db) .. @kv.Subspace('uploads');
 
+function withTransaction(block) {
+  @env('services').db .. @kv.withTransaction(block);
+}
 
 //----------------------------------------------------------------------
 
@@ -56,7 +72,7 @@ function createStory(user_id) {
 
   var story_id = @random.createID();
   
-  @env('services').db .. @kv.withTransaction {
+  withTransaction {
     |T|
     if (!findAccount(user_id, T))
       throw new Error("Unknown user '#{user_id}'");
@@ -109,7 +125,7 @@ exports.getPublicStory = getPublicStory;
    @param {String} [user_id]
 */
 function modifyStory(story_id, data, user_id) {
-  @env('services').db .. @kv.withTransaction {
+  withTransaction {
     |T|
     if (STORIES(T) .. @kv.get([story_id, 'owner']) !== user_id)
       throw new Error("not authorized");
@@ -249,3 +265,35 @@ function Stories(user_id) {
     }));
 }
 exports.Stories = Stories;
+
+
+//----------------------------------------------------------------------
+
+/**
+   @function createUploadForStory
+   @summary XXX write me
+*/
+function createUploadForStory(upload_id, story_id, meta) {
+  console.log("uploading #{upload_id} for "+story_id);
+  withTransaction {
+    |T|
+    UPLOADS(T) .. @kv.set([upload_id, 'meta'], meta);
+    UPLOADS(T) .. @kv.set([upload_id, 'stories_index', story_id], true);
+    STORIES(T) .. @kv.get([story_id, 'data']); // ensure story exists
+    STORIES(T) .. @kv.set([story_id, 'uploads_index', upload_id], true);
+  }
+}
+exports.createUploadForStory = createUploadForStory;
+
+/**
+   @function StoryUploads
+   @summary XXX write me
+*/
+function StoryUploads(story_id, user_id) {
+  // XXX verify that the user is allowed to see the uploads
+  return STORIES() ..
+    @kv.Subspace([story_id, 'uploads_index']) ..
+    @kv.observeQuery(@kv.RANGE_ALL) ..
+    @transform(uploads -> uploads .. @transform([id] -> {url: "/uploads/#{id}"}));
+};
+exports.StoryUploads = StoryUploads;

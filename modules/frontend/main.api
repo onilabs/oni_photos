@@ -88,17 +88,22 @@ exports.Session = function(origin, credentials) {
     },
 
     /**
-       @variable Session.Authorized
+       @variable Session.GoogleAuthorized
        @summary An [sjs:observable::Observable] indicating the Google API authorization status ('true', 'false')
      */
-    Authorized: google_oauth_session.Authorized,
+    GoogleAuthorized: google_oauth_session.Authorized,
 
     /**
-       @function Session.photos
-       @summary Returns a [sjs:sequence::Stream] of 288x288 recent Google photos 
+       @function Session.GooglePhotos
+       @summary Returns a [sjs:observable::Observable] yielding a [sjs:sequence::Stream] of recent Google photos 
     */
-    photos: filter -> @google_photos.query(google_oauth_session, {filter: filter}),
+    GooglePhotos: filter -> @Stream(receiver -> (receiver(@google_photos.query(google_oauth_session, {filter: filter})), hold())),
 
+    /**
+       @function Session.AnonymousPhotos
+       @summary Returns a [sjs:observable::Observable] yielding a [sjs:sequence::Stream] of anonymously uploaded photos 
+    */
+    AnonymousPhotos: story_id -> @db.StoryUploads(story_id, user.id),
 
     /**
        @function Session.createStory

@@ -394,3 +394,48 @@ function VariableApertureStream(arrbuf, settings) {
     };
 }
 exports.VariableApertureStream = VariableApertureStream;
+
+//----------------------------------------------------------------------
+// tabs: [{ title, content }]
+function TabWidget(tabs) {
+
+  var l = tabs .. @count;
+
+  var TabHeaderCSS = @CSS(
+    `
+    > div { display: inline-block;
+            width: ${100/l}%;
+            cursor: pointer;
+          }
+    > div[active] { color:red; }
+    `)
+
+  var ActiveTab = @ObservableVar(0);
+
+  var CmdHandler = @Mechanism(function(node) {
+    cmd.stream(['tab']) .. @each {
+      |[cmd, param]|
+      ActiveTab.set(param);
+    }
+  });
+
+  var rv =
+    @Div ::
+    [
+      // tab content
+      @Div() .. @Class('tab-content') ::
+        ActiveTab .. @transform(index -> tabs[index].content),
+
+      // tab footer
+      @Div .. TabHeaderCSS .. @Class('tab-header') .. CmdHandler ::
+        tabs ..
+          @indexed ..
+          @map([i, {title}] -> @Div(title) ..
+                                 cmd.Click('tab', i) ..
+                                 @Attrib('active', ActiveTab .. @transform(tab -> tab == i))
+              )                               
+    ];
+
+  return rv;
+}
+exports.TabWidget = TabWidget;

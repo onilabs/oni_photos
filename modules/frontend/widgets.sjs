@@ -30,37 +30,13 @@ exports.Action = Action;
 
 
 //----------------------------------------------------------------------
-/**
-   @function VerticalPhotoStream
-   @param {Object} [session]
-   @summary XXX write me
-*/
-function VerticalPhotoStream(session) {
-  var width = document.body.clientWidth-20;
-  var image_size = Math.min(288, Math.floor(width/2-4));
-
-  var ImageCSS = @CSS("
-    img {
-      width:  #{image_size}px;
-      height: #{image_size}px;
-      margin: 0 1px 0 2px;
-    }
-  ");
-  
-  return @Div .. ImageCSS ::
-    @ScrollStream(session.photos() .. 
-                  @transform(x -> @Img() .. @Attrib('src', x.url)));
-}
-exports.VerticalPhotoStream = VerticalPhotoStream;
-
-//----------------------------------------------------------------------
 
 /**
    @function HorizontalPhotoStream
    @param {Object} [session]
    @summary XXX write me
 */
-function HorizontalPhotoStream(session) {
+function HorizontalPhotoStream(PhotosObservable) {
   var image_size = 120;
 
   var CSS = @CSS("
@@ -82,12 +58,31 @@ function HorizontalPhotoStream(session) {
       margin: 0 2px;
     }
   ");
+
+  return @Div() .. CSS() ::
+    PhotosObservable ..
+      @transform(photo_stream ->               
+           @ScrollStream({tolerance:1000}) ::
+                             photo_stream .. 
+                             @transform(x -> @Img() ..
+                                        @Attrib('src', x.url) ..
+                                        @backfill.cmd.Click('click-photo', x.url)
+                                       )
+                );
+};
+
+
+//----------------------------------------------------------------------
+/**
+   @function GooglePhotoStream
+   @param {Object} [session]
+   @summary XXX write me
+*/
+function GooglePhotoStream(session) {
   
   var Filter = @ObservableVar('');
 
-  return @Div() ::
-    [
-      @Input({type: 'search', value: Filter}) .. @Attrib('placeholder', 'Search') .. @CSS("
+  var SearchCSS = @CSS("
       {
         border: 0;
         border-bottom: 1px solid #eee;
@@ -99,19 +94,35 @@ function HorizontalPhotoStream(session) {
         padding: 4px;
         font-size: 14px;
       }
-      "),
-      @Div() .. CSS() ::
-        Filter .. @transform(filter ->
-                             @ScrollStream({tolerance:1000}) ::
-                             session.photos(filter) .. 
-                             @transform(x -> @Img() ..
-                                        @Attrib('src', x.url) ..
-                                        @backfill.cmd.Click('click-photo', x.url)
-                                       )
-                            )
-    ];
+  ");  
+
+  var SearcheablePhotoStream = @Div() ::
+                                 [
+                                   @Input({type: 'search', value: Filter}) ..
+                                     @Attrib('placeholder', 'Search') ..
+                                     SearchCSS,
+                                   Filter ..
+                                     @transform(filter -> HorizontalPhotoStream(session.GooglePhotos(filter)))
+                                 ];
+
+  // authorization notice to show if we're not authorized for the photos api:
+  var AuthorizationNotice = @Div .. @Style('text-align:center') ::
+                              @Button('Authorize Google Photo Access') .. 
+                                @Class('menubar-button') ..
+                                @Style('margin:30px') ..
+                                @OnClick(->require('./auth').authorizeGoogle(session))
+
+  
+  return session.GoogleAuthorized ..
+    @transform(authorized -> authorized ?
+               SearcheablePhotoStream : AuthorizationNotice);
 }
-exports.HorizontalPhotoStream = HorizontalPhotoStream;
+
+//----------------------------------------------------------------------
+
+function AnonymousPhotoStream(session, story_id) {
+  return HorizontalPhotoStream(session.AnonymousPhotos(story_id));
+}
 
 //----------------------------------------------------------------------
 /**
@@ -250,42 +261,48 @@ function StoryEditWidget(Selection) {
 }
 exports.StoryEditWidget = StoryEditWidget;
 
+//----------------------------------------------------------------------
+
 /**
    @function storyEditPalette
    @summary Tools palette for editing stories
    @param {Object} [session]
    @param {sjs:observable::Observable} [Selection]
 */
-function StoryEditPalette(session, Selection) {
+function StoryEditPalette(session, Selection, story_id) {
 
   var ActiveTool = @ObservableVar(0);
 
+  var PhotoClickMechanism = @Mechanism(function() {
+    @backfill.cmd.stream(['click-photo']) .. @each {
+      |[cmd,url]|
+      var selection = Selection .. @current();
+      if (selection) {
+        // XXX We should find a better place for this
+        // <<<
+        selection.classList.add('block-changed');
+        selection.addEventListener('animationend', function() {
+          selection.classList.remove('block-changed');
+        });
+        // >>>
+        (selection .. @field.Value()).set({type:'img', url:url});
+      }
+    }
+  });
+  
   var tools = [
     { 
       type: 'img',
       title: 'Photos',
-      content: session.Authorized .. 
-                @transform(authorized -> authorized ?
-                           HorizontalPhotoStream(session) ..
-                           @Mechanism(function() {
-                             @backfill.cmd.stream(['click-photo']) .. @each {
-                               |[cmd,url]|
-                               var selection = Selection .. @current();
-                               if (selection) {
-                                 selection.classList.add('block-changed');
-                                 selection.addEventListener('animationend', function() {
-                                   selection.classList.remove('block-changed');
-                                 });
-                                 (selection .. @field.Value()).set({type:'img', url:url});
-                               }
-                             }
-                           }) :
-                           @Div .. @Style('text-align:center') ::
-                             @Button('Authorize Google Photo Access') .. 
-                               @Class('menubar-button') ..
-                               @Style('margin:30px') ..
-                               @OnClick(->require('./auth').authorizeGoogle(session))
-                          )
+      content: @backfill.TabWidget() .. PhotoClickMechanism ::
+                 [
+                   { title: 'Google',
+                     content: GooglePhotoStream(session)
+                   },
+                   { title: 'Anonymous Uploads',
+                     content: AnonymousPhotoStream(session, story_id)
+                   }
+                 ] 
     },
     { 
       type: 'txt',

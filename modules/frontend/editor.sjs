@@ -60,7 +60,7 @@ function do_edit_story(story_id) {
             @Div() .. @Class('body') ::
               @widgets.StoryEditWidget(Selection),
             @Div() .. @Class('toolbox') ::
-              @widgets.StoryEditPalette(session, Selection)
+              @widgets.StoryEditPalette(session, Selection, story_id)
           ]
   ) {
     ||
