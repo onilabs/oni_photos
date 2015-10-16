@@ -52,10 +52,12 @@ function HorizontalPhotoStream(PhotosObservable) {
     :active {
       transform: scale(.96);
     }
-    img {
+    div {
       width: #{image_size}px;
       height: #{image_size}px;
       margin: 0 2px;
+      display: inline-block;
+      background-size: cover;
     }
   ");
 
@@ -64,8 +66,8 @@ function HorizontalPhotoStream(PhotosObservable) {
       @transform(photo_stream ->               
            @ScrollStream({tolerance:1000}) ::
                              photo_stream .. 
-                             @transform(x -> @Img() ..
-                                        @Attrib('src', x.url) ..
+                             @transform(x -> @Div() ..
+                                        @Style('background-image:url('+ x.url+')') ..
                                         @backfill.cmd.Click('click-photo', x.url)
                                        )
                 );
