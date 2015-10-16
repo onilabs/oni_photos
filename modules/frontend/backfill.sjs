@@ -400,14 +400,22 @@ exports.VariableApertureStream = VariableApertureStream;
 function TabWidget(tabs) {
 
   var l = tabs .. @count;
-
+  /* XXX ideally we have width: 100%/l for mobile screens
+         and align left for wider screens
+  */
   var TabHeaderCSS = @CSS(
     `
-    > div { display: inline-block;
-            width: ${100/l}%;
-            cursor: pointer;
-          }
-    > div[active] { color:red; }
+    > div {
+      display: inline-block;
+      line-height: 40px;
+      padding: 0 20px;
+      white-space: nowrap;
+      cursor: pointer;
+    }
+    > div[active] {
+      color: #7E53A3; /* XXX think about style guide system */
+      box-shadow: inset 0 -2px 0 currentColor;
+    }
     `)
 
   var ActiveTab = @ObservableVar(0);
@@ -422,9 +430,6 @@ function TabWidget(tabs) {
   var rv =
     @Div ::
     [
-      // tab content
-      @Div() .. @Class('tab-content') ::
-        ActiveTab .. @transform(index -> tabs[index].content),
 
       // tab footer
       @Div .. TabHeaderCSS .. @Class('tab-header') .. CmdHandler ::
@@ -433,7 +438,10 @@ function TabWidget(tabs) {
           @map([i, {title}] -> @Div(title) ..
                                  cmd.Click('tab', i) ..
                                  @Attrib('active', ActiveTab .. @transform(tab -> tab == i))
-              )                               
+              ),
+      // tab content
+      @Div() .. @Class('tab-content') ::
+        ActiveTab .. @transform(index -> tabs[index].content)
     ];
 
   return rv;

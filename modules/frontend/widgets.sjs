@@ -95,6 +95,10 @@ function GooglePhotoStream(session) {
         margin: 2px;
         padding: 4px;
         font-size: 14px;
+
+        position: absolute; /* XXX hack for now */
+        top: 0;
+        right: 0;
       }
   ");  
 
@@ -301,7 +305,7 @@ function StoryEditPalette(session, Selection, story_id) {
                    { title: 'Google',
                      content: GooglePhotoStream(session)
                    },
-                   { title: 'Anonymous Uploads',
+                   { title: 'Inbox',
                      content: AnonymousPhotoStream(session, story_id)
                    }
                  ] 
