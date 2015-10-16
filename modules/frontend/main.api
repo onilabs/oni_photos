@@ -32,9 +32,10 @@ exports.getPublicStory = function(story_id) {
    @function uploadToStory
    @summary XXX write me
 */
-exports.uploadToStory = function(story_id, meta, stream) {
-  return require('backend:upload').uploadToStory(story_id, meta, stream);
-};
+exports.uploadToStory = @fn.sequential ::
+  function(story_id, meta, stream) {
+    return require('backend:upload').uploadToStory(story_id, meta, stream);
+  };
 
 /**
    @function loginGoogle
