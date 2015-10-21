@@ -51,6 +51,8 @@ exports.serve = function(args) {
       
       // hub definitions:
       @route.CodeDirectory(/^(?=hubs\.sjs[^\/]*$)/, require.url("./modules/")),
+      // bundle:
+      @route.CodeDirectory(/^(?=bundle\.sjs[^\/]*$)/, require.url("./modules/")),
       // photo lib:
       @route.StaticDirectory('uploads/', require.url("./uploads"), {allowDirListing: false, mapIndexToDir: false}),
       // common library:

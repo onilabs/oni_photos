@@ -65,9 +65,11 @@ var Document = (content, startup_parameters) -> stringifyHTML ::
     <script src='/__mho/surface/bootstrap/jquery-1.10.2.min.js'></script>
 
     <script src='/__sjs/stratified.js' async></script>
-
+    <script src='/bundle.sjs!bundle'></script>
     <script type='text/sjs'>
-      require.hubs.push(['mho:', '/__mho/']);
+      require.hubs.shift(); 
+      require.hubs.unshift(['mho:', '/__mho/']);
+      require.hubs.unshift(['sjs:', '/__sjs/'])
       require('/hubs');
     </script>
 
