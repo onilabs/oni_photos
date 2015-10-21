@@ -407,6 +407,7 @@ function doImageUpload(ui_parent, file, upload_function) {
   var LeftPosition = UploadPercentage  .. @transform(p -> p < 1 ? '50px' : 'calc(100% - 120px)');
   var ProgressOpacity = UploadPercentage  .. @transform(p -> p < 1 ? 1 : 0);
   var Rotation = UploadPercentage  .. @transform(p -> p < 1 ? -10 : 10);
+console.log(file);
 
   ui_parent .. @insertAfter(
     @Div() .. @CSS(`{
@@ -421,8 +422,8 @@ function doImageUpload(ui_parent, file, upload_function) {
           box-shadow: 0 3px 6px rgba(0, 0, 0, .2);
           width:80px; height:80px;
           background-size: cover;
-          background-image: url(http://pbs.twimg.com/profile_images/2703714724/ce6461696af6f5a7bcf05d314c63ac89.jpeg);
-        }`) :: // background-image: url("${file .. @backfill.fileToDataURL}");
+          background-image: url("${file .. @backfill.fileToDataURL}");
+        }`) :: 
         @Div() ..
           @OnClick({|ev| ev.preventDefault(); return}) ::
           [
