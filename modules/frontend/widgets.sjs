@@ -407,7 +407,6 @@ function doImageUpload(ui_parent, file, upload_function) {
   var LeftPosition = UploadPercentage  .. @transform(p -> p < 1 ? '50px' : 'calc(100% - 120px)');
   var ProgressOpacity = UploadPercentage  .. @transform(p -> p < 1 ? 1 : 0);
   var Rotation = UploadPercentage  .. @transform(p -> p < 1 ? -10 : 10);
-console.log(file);
 
   ui_parent .. @insertAfter(
     @Div() .. @CSS(`{
