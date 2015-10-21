@@ -334,6 +334,7 @@ exports.DropdownMenu = DropdownMenu;
 //----------------------------------------------------------------------
 
 function fileToDataURL(file) {
+  if (!file) return '';
   var reader = new FileReader();
 
   waitfor {
