@@ -403,31 +403,68 @@ function upload(input, upload_function) {
 function doImageUpload(ui_parent, file, upload_function) {
 
   var UploadPercentage = @ObservableVar(0);
-  
+  var Fill = UploadPercentage  .. @transform(p -> p * 100 + '%');
+  var LeftPosition = UploadPercentage  .. @transform(p -> p < 1 ? '50px' : 'calc(100% - 120px)');
+  var ProgressOpacity = UploadPercentage  .. @transform(p -> p < 1 ? 1 : 0);
+  var Rotation = UploadPercentage  .. @transform(p -> p < 1 ? -10 : 10);
+
   ui_parent .. @insertAfter(
-    @Div() .. @Style('white-space:nowrap') ::
+    @Div() .. @CSS(`{
+        position: absolute;
+        left: $LeftPosition;
+        transition: all 500ms ease;
+        transform: translateZ(0) rotate(${Rotation}deg);
+      }`) ::
       [
-        @Img() .. @Attrib('src', file .. @backfill.fileToDataURL) .. @Style('width:50px; height:50px'),
-        `&nbsp`,
-        @B() ::
+        @Div() .. @CSS(`{
+          border: 3px solid #fff;
+          box-shadow: 0 3px 6px rgba(0, 0, 0, .2);
+          width:80px; height:80px;
+          background-size: cover;
+          background-image: url(http://pbs.twimg.com/profile_images/2703714724/ce6461696af6f5a7bcf05d314c63ac89.jpeg);
+        }`) :: // background-image: url("${file .. @backfill.fileToDataURL}");
+        @Div() ..
+          @OnClick({|ev| ev.preventDefault(); return}) ::
           [
-            UploadPercentage,
-            `/100`
-          ],
-        @Button('X') .. @OnClick({|ev| ev.preventDefault(); return})
+            @Div() .. @CSS(`{
+              position: absolute;
+              top: 50%;
+              left: 50%;
+              margin: -4px 0 0 -15px;
+              height: 8px;
+              width: 30px;
+
+              transition: opacity 500ms ease;
+              background: rgba(255, 255, 255, 0.2);
+              border: 1px solid #fff;
+              border-radius: 2px;
+              opacity: $ProgressOpacity;
+            }`) ::
+              @Div() .. @CSS(`{
+                background: #fff;
+                width: $Fill;
+                height: 100%;
+              }`)
+          ]
       ]
   ) {
     ||
-    upload_function({name: file.name},
-                    @backfill.VariableApertureStream(file .. @backfill.fileToArrayBuffer,
-                                                     { progress_observer: p -> UploadPercentage.set(p) }));
+    for (var i = 0; i <= 200; i++) {
+      UploadPercentage.set(i/200);
+      hold(5)
+    }
+    hold(); // forever show the uploaded images
+
+    // upload_function({name: file.name},
+    //                 @backfill.VariableApertureStream(file .. @backfill.fileToArrayBuffer,
+    //                                                  { progress_observer: p -> UploadPercentage.set(p) }));
   }
 }
 
 function StoryUploader(upload_function) {
-
+  doImageUpload(document.body);
   return @Input() ..
-    @Style("display: none") ..
+    @Style("display: none; position: relative;") ..
     @Attrib('type','file') ..
     @Attrib('accept', 'image/*') ..
     @Attrib('multiple') ..
