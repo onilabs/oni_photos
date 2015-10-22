@@ -39,7 +39,7 @@ function do_index_no_session() {
 }
 
 function do_index_with_session(session) {
-  // @contextMenu .. @replaceContent(@widgets.Action('add_story') :: 'Create new story');
+
   @mainContent .. @replaceContent(
     @Div() ::
       [
@@ -48,7 +48,7 @@ function do_index_with_session(session) {
             @map(story -> @Div(`
                              <a class="project-image"
                                 href="/story/${story.id}"
-                                style="background-image:url(${story.thumbnail})">
+                                style="background-image:url(${story.thumbnail||'/frontend/assets/empty-story.svg'})">
                                 <div class="project-title">${story.title}</div>
                              </a>
                            `
