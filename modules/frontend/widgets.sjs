@@ -462,7 +462,6 @@ function doImageUpload(ui_parent, file, upload_function) {
 }
 
 function StoryUploader(upload_function) {
-  doImageUpload(document.body);
   return @Input() ..
     @Style("display: none; position: relative;") ..
     @Attrib('type','file') ..
