@@ -403,10 +403,10 @@ function upload(input, upload_function) {
 function doImageUpload(ui_parent, file, upload_function) {
 
   var UploadPercentage = @ObservableVar(0);
-  var Fill = UploadPercentage  .. @transform(p -> p * 100 + '%');
-  var LeftPosition = UploadPercentage  .. @transform(p -> p < 1 ? '50px' : 'calc(100% - 120px)');
-  var ProgressOpacity = UploadPercentage  .. @transform(p -> p < 1 ? 1 : 0);
-  var Rotation = UploadPercentage  .. @transform(p -> p < 1 ? -10 : 10);
+  var Fill = UploadPercentage  .. @transform(p -> p + '%');
+  var LeftPosition = UploadPercentage  .. @transform(p -> p < 100 ? '50px' : 'calc(100% - 120px)');
+  var ProgressOpacity = UploadPercentage  .. @transform(p -> p < 100 ? 1 : 0);
+  var Rotation = UploadPercentage  .. @transform(p -> p < 100 ? -10 : 10);
 
   ui_parent .. @insertAfter(
     @Div() .. @CSS(`{
@@ -449,15 +449,15 @@ function doImageUpload(ui_parent, file, upload_function) {
       ]
   ) {
     ||
-    for (var i = 0; i <= 200; i++) {
-      UploadPercentage.set(i/200);
-      hold(5)
+    waitfor {
+      upload_function({name: file.name},
+                      @backfill.VariableApertureStream(file .. @backfill.fileToArrayBuffer,
+                                                       { progress_observer: p -> UploadPercentage.set(p) }));
     }
-    hold(); // forever show the uploaded images
-
-    // upload_function({name: file.name},
-    //                 @backfill.VariableApertureStream(file .. @backfill.fileToArrayBuffer,
-    //                                                  { progress_observer: p -> UploadPercentage.set(p) }));
+    and {
+      // make sure the image is on screen for at least 2 seconds
+      hold(2000); 
+    }
   }
 }
 
