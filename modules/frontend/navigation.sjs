@@ -6,19 +6,29 @@ var NavigationEmitter = @Emitter();
 
 //----------------------------------------------------------------------
 
-function navigate(url, omit_state_push) {
+function navigate(url, settings) {
+  settings = {
+    event: undefined,
+    omit_state_push: false
+  } .. @override(settings);
+
   var url = url .. @url.normalize(location.href);
   var origin = location.origin;
-  if (!url .. @startsWith(origin)) return false;
+  if (!url .. @startsWith(origin)) {
+    return false;
+  }
   url = url.substring(origin.length);
+  if (settings.event) {
+    event.preventDefault();
+  }
 
-  if (!omit_state_push)
+  if (!settings.omit_state_push)
     history.pushState(null, '', url);
+
   NavigationEmitter.emit(url);
   return true;
 }
 exports.navigate = navigate;
-
 
 //----------------------------------------------------------------------
 
@@ -31,8 +41,7 @@ function captureLinks() {
             }) .. 
     @each {
       |ev|
-      if (navigate(ev.target.href))
-          ev.preventDefault();
+      navigate(ev.target.href, {event: ev});
     }
 }
 
@@ -41,8 +50,7 @@ function dispatchStateChanges() {
     @events("popstate") ..
     @each {
       |ev|
-      console.log('nav event');
-      navigate(location.href, true);
+      navigate(location.href, {omit_state_push:true, event: ev});
     }
 }
 
@@ -108,7 +116,7 @@ function route(routes) {
   or {
     // goto initial page:
     console.log('navigating to initial page');
-    navigate(location.href, true);
+    navigate(location.href, {omit_state_push:true});
     dispatchStateChanges();
   }
 
