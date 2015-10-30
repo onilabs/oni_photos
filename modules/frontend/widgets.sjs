@@ -9,7 +9,8 @@
   {id:'mho:surface/nodes', name:'nodes'},
   {id:'mho:surface/field', name:'field'},
   {id:'lib:static_html', name:'static'},
-  {id:'lib:datastructures', name:'data'}
+  {id:'lib:datastructures', name:'data'},
+  {id:'./photo-utils', name:'photo_utils'}
 ]);
 
 //----------------------------------------------------------------------
@@ -395,6 +396,7 @@ function upload(input, upload_function) {
 
   input.files .. @each {
     |file|
+    file = @photo_utils.resizeImage(file);
     spawn doImageUpload(input, file, upload_function);
   }
   input.value = '';
@@ -461,7 +463,7 @@ function doImageUpload(ui_parent, file, upload_function) {
   }
 }
 
-function StoryUploader(upload_function) {
+function PhotoUploader(upload_function) {
   return @Input() ..
     @Style("display: none; position: relative;") ..
     @Attrib('type','file') ..
@@ -470,4 +472,4 @@ function StoryUploader(upload_function) {
     @On('change', ev -> upload(ev.currentTarget, upload_function));
   
 }
-exports.StoryUploader = StoryUploader;
+exports.PhotoUploader = PhotoUploader;

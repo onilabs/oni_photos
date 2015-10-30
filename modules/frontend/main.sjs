@@ -3,7 +3,6 @@
 */
 
 require('/hubs');
-console.log('xxx');
 @ = require([
   'mho:std',
   'mho:app',
@@ -17,7 +16,6 @@ console.log('xxx');
   {id:'./navigation', name: 'navigation'}
 
 ]);
-console.log('yyy');
 
 //----------------------------------------------------------------------
 
@@ -93,7 +91,7 @@ function do_show_story(url,story_id) {
         <label class="story-uploader">
           <div class="story-uploader-title">Upload photos to this story</div>
           <p>Only ${story.owner_name} will see your uploads and will be able to add your photos to this story.</p>
-          ${@widgets.StoryUploader((meta, stream)-> @env('api').uploadToStory(story_id, meta, stream))}
+          ${@widgets.PhotoUploader((meta, stream)-> @env('api').uploadToStory(story_id, meta, stream))}
         </label>
       </div>
     `]
