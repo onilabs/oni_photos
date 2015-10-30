@@ -12,14 +12,18 @@ var run = function(cmd, args, opts) {
   console.log(" + #{cmd} #{args.join(' ')}");
   return childProcess.run(cmd, args, ({stdio:'inherit'} .. merge(opts)));
 }
-console.log(process.argv .. @inspect);
+
 // make sure we're in the right directory
 var here = path.dirname(process.argv[1] .. @url.toPath);
 process.chdir(here);
 
 var sources = getSources();
 for (var i=0; i<sources.length; ++i) {
-  var src = sources[i];
+  var src = sources[i]; 
+  if (fs.exists(src.dir+'.git')) {
+    console.log('directory '+src.dir+' already contains a git repository -> ignoring');
+    continue;
+  }
   var changes = run('git', ['status', '--porcelain', src.dir], {stdio: [0,'pipe', 2]}).stdout.split('\n')
     .. @filter(line -> line.length > 0)
     // .. @monitor(x -> console.log(JSON.stringify(x)))
@@ -28,10 +32,6 @@ for (var i=0; i<sources.length; ++i) {
     .. @toArray;
   if (changes.length !== 0) {
     console.log('directory '+src.dir+' not clean -> ignoring');
-    continue;
-  }
-  if (fs.exists(src.dir+'.git')) {
-    console.log('directory '+src.dir+' already contains a git repository -> ignoring');
     continue;
   }
   var fullpath = path.join(here, src.dir);
