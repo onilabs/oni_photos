@@ -1,0 +1,3 @@
+# https://github.com/blueimp/JavaScript-Load-Image
+load-image/ https://github.com/blueimp/JavaScript-Load-Image.git 464fa505204e2a6592805e799a4b5f63578bea09
+
