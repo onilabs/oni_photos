@@ -1,3 +1,5 @@
 # https://github.com/blueimp/JavaScript-Load-Image
 load-image/ https://github.com/blueimp/JavaScript-Load-Image.git 464fa505204e2a6592805e799a4b5f63578bea09
 
+# https://github.com/blueimp/JavaScript-Canvas-to-Blob
+canvas-to-blob/ https://github.com/blueimp/JavaScript-Canvas-to-Blob.git b107a012d06bc4cb1ae93f4e1e9c64653814d6c4
