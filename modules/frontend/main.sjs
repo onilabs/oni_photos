@@ -105,8 +105,7 @@ function do_show_story(url,story_id) {
                    `<a class="menubar-button" href="/story/${story_id}/edit">Edit</a>`)
     ) {
       ||
-      require('frontend:published_story_interactions').lightboxBehavior('.story-image');
-      hold();
+      require('./lightbox').lightboxBehavior('.story-image');
     }
   }
 }

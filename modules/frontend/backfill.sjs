@@ -448,3 +448,18 @@ function TabWidget(tabs) {
   return rv;
 }
 exports.TabWidget = TabWidget;
+
+//----------------------------------------------------------------------
+
+function waitforAnimationFrame() {
+  waitfor(var timestamp) {
+    var id = requestAnimationFrame(resume);
+  }
+  retract {
+    cancelAnimationFrame(id);
+  }
+
+  return timestamp;
+}
+exports.waitforAnimationFrame = waitforAnimationFrame;
+
