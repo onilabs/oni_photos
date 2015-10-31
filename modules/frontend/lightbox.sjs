@@ -76,6 +76,7 @@ function lightboxBehavior(selector) {
         clone .. saveStyle {
           ||
           
+          @backfill.waitforAnimationFrame();
           // move the cloned photo
           clone.style.top = '0px';
           clone.style.left = '0px';
